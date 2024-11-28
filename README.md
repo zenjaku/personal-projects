@@ -3,6 +3,4 @@ This is a sample e-commerce website, some functions are not working. You can mod
 Username: Admin
 Password: Admin!12345
 
-Website: zenrose.42web.io
-
 (PHP, Bootstrap, Font Awesome 6)
