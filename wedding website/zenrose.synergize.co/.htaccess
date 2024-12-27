@@ -1,0 +1,20 @@
+RewriteEngine On
+RewriteBase /
+
+# Prevent direct access to sensitive directories
+<FilesMatch "\.(env|ini|log|sh|sql|bak|php~)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Deny access to the .htaccess file itself
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Redirect clean URLs to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?page=$1 [QSA,L]
