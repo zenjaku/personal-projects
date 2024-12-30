@@ -1,3 +1,4 @@
 Personal Projects
 
-[Zenrose Wedding Website]**(zenrose.synergize.co)**
+[Zenrose Wedding Website](https://zenrose.synergize.co)
+
