@@ -1,0 +1,121 @@
+body {
+    background-color: goldenrod;
+}
+
+h1 {
+    font-family: tahoma;
+    color: blue;
+    font-size: 40px;
+}
+
+h2 {
+    font-family: Verdana;
+    color: green;
+    font-size: 25px;
+}
+
+label {
+    font-family: Verdana;
+    color: green;
+    font-size: 25px;
+    display: flex;
+    width: 300px; /* Adjust width to ensure labels and inputs align properly */
+}
+
+input {
+    border: 1px solid whitesmoke;
+    border-radius: 3px;
+    width: 300px;
+    height: 40px;
+    font-family: Verdana;
+    font-size: 25px;
+}
+
+td {
+    height: 40px;
+
+}
+
+.header {
+    color: whitesmoke;
+    font-size: 30px;
+}
+
+.outputLabel {
+    font-family: Verdana;
+    color: whitesmoke;
+    font-size: 20px;
+}
+
+#out_tomaraoFirstName,
+#out_tomaraoLastName,
+#out_tomaraoAreaCode,
+#out_tomaraoPhoneNumber,
+#out_tomaraoStreet,
+#out_tomaraoCity,
+#out_tomaraoState,
+#out_tomaraoCode,
+#out_tomaraoCountry,
+#out_tomaraoCompany,
+#out_tomaraoCount {
+    font-family: Verdana;
+    color: whitesmoke;
+    font-size: 25px;
+    text-transform: uppercase;
+}
+
+#out_tomaraoEmail {
+    font-family: Verdana;
+    color: whitesmoke;
+    font-size: 25px;
+}
+
+#output {
+    font-family: Helvetica;
+    color: whitesmoke;
+    font-size: 25px;
+}
+
+.renzoTitle {
+    font-weight: bold;
+    color: whitesmoke;
+
+}
+
+.renzoPlaceHolder {
+    font-size: 20px;
+
+}
+
+.viewButton, .submitButton {
+    font-family: Century Gothic;
+    font-size: 20px;
+    color: white;
+    width: 250px;
+    height: 75px; 
+}
+
+.viewButton {
+    background-color: red;
+    border-color: green;
+
+}
+.submitButton {
+    background-color: yellowgreen;
+    border-color: green;
+}
+
+.box {
+    background-color: green;
+    border: 1px solid green;
+    border-radius: 3px;
+    width: 300px;
+    height: 40px;
+    display: flex;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.tomaraoTitle {
+    font-weight: bold;
+}
