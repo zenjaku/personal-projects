@@ -1,0 +1,294 @@
+<html>
+<head>
+    <title> Registration Form </title>
+    <link rel="stylesheet" href="../css/tomaraoRegStyle1.css">
+    <script>
+        function tomaraoViewInformation() {
+            var firstName = document.getElementById("tomaraoFirstName").value;
+            var LastName = document.getElementById("tomaraoLastName").value;
+            var email = document.getElementById("tomaraoEmail").value;
+            var address = document.getElementById("tomaraoAreaCode").value;
+            var phoneNumber = document.getElementById("tomaraoPhoneNumber").value;
+            var street = document.getElementById("tomaraoStreet").value;
+            var city = document.getElementById("tomaraoCity").value;
+            var state = document.getElementById("tomaraoState").value;
+            var code = document.getElementById("tomaraoCode").value;
+            var country = document.getElementById("tomaraoCountry").value;
+            var company = document.getElementById("tomaraoCompany").value;
+            var count = document.getElementById("tomaraoCount").value;
+
+
+
+            document.getElementById("out_tomaraoFirstName").innerText = firstName;
+            document.getElementById("out_tomaraoLastName").innerText = LastName;
+            document.getElementById("out_tomaraoEmail").innerText = email;
+            document.getElementById("out_tomaraoAreaCode").innerText = address;
+            document.getElementById("out_tomaraoPhoneNumber").innerText = phoneNumber;
+            document.getElementById("out_tomaraoStreet").innerText = street;
+            document.getElementById("out_tomaraoCity").innerText = city;
+            document.getElementById("out_tomaraoState").innerText = state;
+            document.getElementById("out_tomaraoCode").innerText = code;
+            document.getElementById("out_tomaraoCountry").innerText = country;
+            document.getElementById("out_tomaraoCompany").innerText = company;
+            document.getElementById("out_tomaraoCount").innerText = count;
+        }
+
+        function tomaraoSubmitInformation(event) {
+            var fields = [
+                "out_tomaraoFirstName",
+                "out_tomaraoLastName",
+                "out_tomaraoEmail",
+                "out_tomaraoAreaCode",
+                "out_tomaraoPhoneNumber",
+                "out_tomaraoStreet",
+                "out_tomaraoCity",
+                "out_tomaraoState",
+                "out_tomaraoCode",
+                "out_tomaraoCountry",
+                "out_tomaraoCompany",
+                "out_tomaraoCount"
+            ];
+
+            var allFilled = true;
+            fields.forEach(function(field) {
+                var value = document.getElementById(field).value;
+                if (!value) {
+                    allFilled = false;
+                    alert(field.replace("out_tomarao", "").replace(/([A-Z])/g, ' $1').trim() + " is required.");
+                    return;
+                }
+            });
+
+            if (!allFilled) {
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+        }
+
+    </script>
+</head>
+<body>
+<!--
+
+-->
+    <h1> REGISTRATION FORM </h1>
+<h2>
+    <form>
+        <table>
+        <tr>
+            <td><label for="tomaraoFname" class="tomaraoTitle"> Full Name </label></td>
+            <td><input type="text" id="tomaraoFirstName" name="tomaraoFirstName" required></td>
+            <td><input type="text" id="tomaraoLastName" name="tomaraoLastName" required></td>
+        </tr>
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoFname"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoFirstName1">First Name</label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoLastName1">Last Name</label></td>
+        </tr>
+<!--for label-->
+
+        <tr>
+            <td><label for="tomaraoEmail" class="tomaraoTitle"> E-Mail </label></td>
+            <td><input type="text" id="tomaraoEmail" name="tomaraoEmail" required></td>
+        </tr>
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoEmail"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoEmail1">sample@gmail.com</label></td>
+        </tr>
+<!--for label-->
+
+        <tr>
+            <td><label for="tomaraoPhoneNumber" class="tomaraoTitle"> Phone Number </label></td>
+            <td><input type="number" id="tomaraoAreaCode" name="tomaraoPhoneNumber" required></td>
+
+            <td><input type="number" id="tomaraoPhoneNumber" name="tomaraoPhoneNumber" required></td>
+        </tr>
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoPhoneNumber"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoPhoneNumber1">Area Code</label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoPhoneNumber2">Phone Number</label></td>
+        </tr>
+<!--for label-->
+
+
+<!--address-->
+        <tr>
+            <td><label for="tomaraoAddress" class="tomaraoTitle"> Address </label></td>
+            <td><input type="text" id="tomaraoStreet" name="tomaraoAddress" required></td>
+        </tr>
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoAddress"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoAddress1">Street Address</label></td>
+        </tr>
+
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoAddress"> </label></td>
+            <td><input type="text" id="tomaraoCity" name="tomaraoAddress" required></td>
+
+            <td><input type="text" id="tomaraoState" name="tomaraoAddres" required></td>
+        </tr>
+
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoAddress"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoAddress1">City</label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoAddress2">State/Province</label></td>
+        </tr>
+
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoAddress"> </label></td>
+            <td><input type="number" id="tomaraoCode" name="tomaraoAddress" required></td>
+
+            <td><input type="text" id="tomaraoCountry" name="tomaraoAddress" required></td>
+        </tr>
+
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoAddress"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoAddress1">Postal/Zip Code</label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoAddress2">Country</label></td>
+        </tr>
+<!--for label-->
+
+<!--address-->
+
+
+        <tr>
+            <td><label for="tomaraoCompany" class="tomaraoTitle"> Company Name </label></td>
+            <td><input type="text" id="tomaraoCompany" name="tomaraoCompany" required></td>
+        </tr>
+
+        <tr>
+            <td><label for="tomaraoCount" class="tomaraoTitle"> Attendee Count</label></td>
+            <td><input type="number" id="tomaraoCount" name="tomaraoCount" required></td>
+        </tr>
+
+<!--for label-->
+        <tr>
+            <td><label for="tomaraoCount"></label></td>
+            <td><label class="renzoPlaceHolder" for="tomaraoCount1">max. 20 attendee</label></td>
+        </tr>
+<!--for label-->
+
+        </table>
+    </form>
+</h2>
+
+    <p>
+        <button type="button" class="viewButton" onclick="tomaraoViewInformation()"> VIEW </button>
+    </p><br>
+
+
+
+<!---outputInfo-->
+
+    <h2 class="header">YOUR INFORMATION</h2>
+    <table class="output">
+<!--FULL NAME-->
+    <tr>
+        <td><label class="renzoTitle">FULL NAME </label></td>
+        <td><span id="out_tomaraoFirstName" class="box"></span></td>
+        <td><span  id="out_tomaraoLastName" class="box"></span></td>
+    </tr>
+
+<!--label-->
+    <tr>
+        <td><label for="tomaraoFname"></label></td>
+        <td><label class="outputLabel">First Name </label></td>
+        <td><label class="outputLabel">Last Name </label></td>
+    </tr>
+
+<!--EMAIL-->
+    <tr>
+        <td><label class="renzoTitle"> E-Mail Address: </label></td>
+        <td><span id="out_tomaraoEmail" class="box"></span></td>
+    </tr>
+
+<!--label-->
+    <tr>
+        <td><label for="tomaraoEmail"></label></td>
+        <td><label class="outputLabel">sample@gmail.com</label></td>
+    </tr>
+
+<!--PHONE-->
+    <tr>
+        <td><label class="renzoTitle"> Phone Number </label></td>
+        <td><span  id="out_tomaraoAreaCode" class="box"></span></td>
+        <td><span  id="out_tomaraoPhoneNumber" class="box"></span></td>
+    </tr>
+<!--label-->
+    <tr>
+        <td><label for="tomaraoPhoneNumber"></label></td>
+        <td><label class="outputLabel">Area Code</label></td>
+        <td><label class="outputLabel">Phone Number</label></td>
+    </tr>
+
+
+<!--ADDRESS-->
+    <tr>
+        <td><label class="renzoTitle">ADDRESS</label></td>
+        <td><span  id="out_tomaraoStreet" class="box"></span></td>
+    </tr>
+<!--STREET-->
+    <tr>
+        <td><label for="tomaraoAddress"></label></td>
+        <td><label class="outputLabel">Street Address</label></td>
+    </tr>
+
+<!--CITY/STATE-->
+    <tr>
+        <td><label for="tomaraoAddress"></label></td>
+        <td><span id="out_tomaraoCity" class="box"></span></td>
+        <td><span id="out_tomaraoState" class="box"></span></td>
+    </tr>
+
+    <tr>
+        <td><label for="tomaraoAddress"></label></td>
+        <td><label class="outputLabel">City</label></td>
+        <td><label class="outputLabel">State/Province</label></td>
+    </tr>
+
+<!--CODE/COUNTRY-->
+    <tr>
+        <td><label for="tomaraoAddress"></label></td>
+        <td><span id="out_tomaraoCode" class="box"></span></td>
+        <td><span id="out_tomaraoCountry" class="box"></span></td>
+    </tr>
+
+    <tr>
+        <td><label for="tomaraoAddress"></label></td>
+        <td><label class="outputLabel">Postal/Zip Code</label></td>
+        <td><label class="outputLabel">Country</label></td>
+    </tr>
+
+<!--COMPANY-->
+    <tr>
+        <td><label class="renzoTitle"> COMPANY NAME: </label></td>
+        <td><span id="out_tomaraoCompany" class="box"></span></td>
+    </tr>
+
+<!--ATTENDEE-->
+    <tr>
+        <td><label class="renzoTitle"> ATTENDEE COUNT: </label></td>
+        <td><span id="out_tomaraoCount" class="box"></span></td>
+    </tr>
+
+<!--label-->
+    <tr>
+        <td><label for="tomaraoEmail"></label></td>
+        <td><label class="outputLabel">max. 20 attendee</label></td>
+    </tr>
+    </table><br>
+    <p>
+        <a href="tomaraoMainPage.html" target="_self">
+            <button type="submit" class="submitButton" onclick="tomaraoSubmitInformation(event)"> SUBMIT </button>
+        </a>
+    </p>
+</body>
+</html>

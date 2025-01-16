@@ -1,0 +1,66 @@
+
+    <?php
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
+    if ($username == null) {
+        $orderNotif = 0;
+    } else {
+        // if (!isset($_SESSION['delivery_modal_shown'])) {
+            $getOrderNotif = "SELECT * FROM orders WHERE username = '$username'";
+            $result = mysqli_query($connection, $getOrderNotif);
+            $orderNotif = mysqli_num_rows($result);
+            while ($order = mysqli_fetch_assoc($result)) {
+                $products = explode(',', $order['productId']);
+                $quotedProducts = array_map(function ($id) {
+                    return "'" . trim($id) . "'";
+                }, $products);
+                $productsList = implode(',', $quotedProducts);
+
+                $fetchProducts = "SELECT * FROM product WHERE productId IN ($productsList)";
+                $productResult = mysqli_query($connection, $fetchProducts);
+                
+                while ($product = mysqli_fetch_assoc($productResult)) {
+                    $productNames[] = $product['pname'];
+                    if ($order['delivery_date'] != null) {
+                        $totalPrice = 0;
+                        $totalPrice += $order['total_price'];
+                    }
+                }
+
+                if ($order['delivery_date'] != null) {
+                    if ($order['delivery_date'] >= date('Y-m-d')) {
+                        ?>
+                        <div id="modal-<?= $order['orderId'] ?>" class="modal-content hidden">
+                            <h2 style="text-align: center; margin-bottom: 1em;">DELIVERY DATE</h2>
+                            <p>Products: <?= implode(', ', $productNames) ?></p>
+                            <p>Total Price: PHP <?= $order['total_price'] ?></p>
+                            <p>Quantity: <?= $order['qty'] ?></p>
+                            <p>Delivery Date: <?= date('F j, Y', strtotime($order['delivery_date'])) ?></p>
+                            <button type="button" class="delete-btn" onclick="closeModal('modal-<?= $order['orderId'] ?>')">Close</button>
+                        </div>
+                        <script>
+                            window.addEventListener('DOMContentLoaded', function() {
+                                openModal('modal-<?= $order['orderId'] ?>');
+                            });
+                        </script>
+                        <?php
+                    }
+                }
+            }
+        //     $_SESSION['delivery_modal_shown'] = false;
+        // }
+    }
+    ?>
+
+<script>
+        const close = document.getElementById('closeModal');
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.querySelector('.overlay-modal').classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.querySelector('.overlay-modal').classList.add('hidden');
+            window.location.href = 'main.php';
+        }
+    </script>

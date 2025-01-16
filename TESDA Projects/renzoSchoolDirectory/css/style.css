@@ -1,0 +1,456 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+li {
+    list-style: none;
+}
+
+nav {
+    padding: 3em 3em;
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+#tomaraoHeader {
+    background-color: #020047;
+    cursor: pointer;
+    padding: 2.5em;
+    color: #fff;
+}
+
+#tomaraoHeader h1 {
+    margin-bottom: .5em;
+}
+
+#tomaraoMain {
+    justify-self: center;
+    padding: 1em 0;
+    text-align: center;
+}
+
+#tomaraoMain h1 {
+    margin-bottom: 1em;
+    font-size: 3em;
+}
+
+#tomaraoMain p {
+    font-size: 1.5em;
+}
+
+#tomaraoFooter {
+    text-align: center;
+    padding: .5em;
+    width: 100%;
+    background-color: #020047;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+.renzo-primary-btn {
+    background-color: #0011ff;
+    color: #fff;
+    border: none;
+    width: 150px;
+    height: 30px;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    border-radius: 5px;
+}
+
+.renzo-primary-btn:hover {
+    opacity: 80%;
+}
+
+#login,
+#register {
+    justify-self: center;
+    margin: 2em 0;
+    padding: 2em;
+    box-shadow: 1px 1px 1px 1px #000;
+    border-radius: 5px;
+}
+
+#loginForm,
+#registerForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.input-fields {
+    width: 100%;
+    height: 30px;
+    padding: 1em;
+}
+
+.logout-btn {
+    background-color: #a60000;
+    color: #fff;
+    border: none;
+    width: 150px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.logout-btn:hover {
+    opacity: 80%;
+}
+
+.main-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.main-table thead tr {
+    background-color: #020047;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.main-table th,
+.main-table td {
+    border: 1px solid #dddddd;
+    padding: 12px 15px;
+}
+
+
+#searchForm {
+    display: flex;
+    justify-content: center;
+}
+
+.search-btn {
+    width: 100px;
+    background-color: #ffb700;
+    border: none;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+
+.search-btn:hover {
+    opacity: 80%;
+}
+
+.admin-btns {
+    width: 150px;
+    height: 30px;
+    background-color: #020047;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+
+.admin-btns:hover {
+    opacity: 80%;
+}
+
+
+#profileModal {
+    padding: 8em;
+    justify-self: center;
+}
+
+.card {
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    box-shadow: 1px 1px 1px 1px #000;
+    width: 500px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+}
+
+hr {
+    width: 100%;
+}
+
+#usersModal {
+    padding: 5em;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.user-table thead tr {
+    background-color: #020047;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.user-table th,
+.user-table td {
+    border: 1px solid #dddddd;
+    padding: 12px 15px;
+}
+
+#schoolModal {
+    padding: 5em;
+}
+
+.action-btns {
+    width: 100px;
+    height: 30px;
+    background-color: #1743a4;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.action-btns:hover {
+    opacity: 80%;
+}
+
+.add-school {
+    justify-self: center;
+    /* padding: 10em; */
+    width: 500px;
+    margin: 5em;
+    padding: 2em;
+}
+
+#schoolForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2em;
+}
+
+#schoolForm .input-fields {
+    width: 400px !important;
+}
+
+.form-floating {
+    position: relative;
+}
+
+.form-floating input,
+.form-floating textarea {
+    padding: 1rem 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    resize: none;
+}
+
+.form-floating label {
+    position: absolute;
+    top: 0;
+    left: 0.5rem;
+    padding: .5em 0.5rem;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.form-floating input:focus+label,
+.form-floating input:not(:placeholder-shown)+label,
+.form-floating textarea:focus+label,
+.form-floating textarea:not(:empty)+label {
+    top: -1rem;
+    left: 0.5rem;
+    font-size: 0.75rem;
+    color: #495057;
+}
+
+.form-floating textarea {
+    min-height: 100px;
+}
+
+
+#feedbacks {
+    padding: 8em;
+}
+
+#archivedModal {
+    padding: 5em;
+    justify-self: center;
+}
+
+.archived-btns {
+    background-color: #328ca7;
+    color: #fff;
+    width: 150px;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+
+.archived-btns:hover {
+    opacity: 80%;
+}
+
+.user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.school-name {
+    display: flex;
+    align-items: center;
+    gap: 2em;
+}
+
+.school-name h2 {
+    font-size: 2em;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+}
+
+#profilePhotoForm {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
+
+#profilePhotoForm button {
+    width: 100%;
+}
+
+input {
+    cursor: pointer;
+}
+
+#editSchool {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 2em;
+    gap: 1em;
+}
+
+#editSchool input {
+    width: 400px;
+    height: 50px;
+}
+
+.edit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-photo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.user-buttons {
+    display: flex;
+    justify-content: end;
+    gap: .2em;
+}
+
+#userModal,
+#feedbackModal {
+    padding: 5em;
+    justify-self: center;
+}
+
+#feedbackForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+#feedbackForm textarea {
+    height: 100px;
+}
+
+input:disabled {
+    background-color: #d8d8d8;
+    font-weight: bolder;
+}
+
+input:disabled+label {
+    background-color: #d8d8d8;
+}
+
+#feedbackForm button {
+    margin-left: auto;
+}
+
+#alertSuccess {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #049f1b;
+    color: #fff;
+    height: 30px;
+    width: 100%;
+}
+
+#alertFailed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #9f0404;
+    color: #fff;
+    height: 30px;
+    width: 100%;
+}
+
+.dashboard-btns {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.pagination {
+    background-color: #020047;
+    padding: .5em 1em;
+    display: flex;
+    gap: 1em;
+    justify-content: end;
+}
+
+.pagination a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.pagination a.active {
+    border: 1px solid #fff;
+    padding: 0 .5em;
+}

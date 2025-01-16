@@ -1,0 +1,192 @@
+<html>
+<head>
+    <title> This is the Mathematical Calculator </title>
+    <link rel="stylesheet" href="../css/tomaraoRegStyle.css" />
+    <script>
+        function viewInformation() {
+            var firstname = document.getElementById("tomaraoFirstName").value;
+            var middlename = document.getElementById("tomaraoMiddleName").value;
+            var lastname = document.getElementById("tomaraoLastName").value;
+            var suffix = document.getElementById("tomaraoSuffix").value;
+            var country = document.getElementById("tomaraoCountry").value;
+            var province = document.getElementById("tomaraoProvince").value;
+            var municipality = document.getElementById("tomaraoMunicipality").value;
+            var barangay = document.getElementById("tomaraoBarangay").value;
+            var subd = document.getElementById("tomaraoSubd").value;
+            var birthday = document.getElementById("tomaraoBirthday").value;
+            var age = document.getElementById("tomaraoAge").value;
+
+            document.getElementById("out_tomaraoFirstName").innerText = firstname;
+            document.getElementById("out_tomaraoMiddleName").innerText = middlename;
+            document.getElementById("out_tomaraoLastName").innerText = lastname;
+            document.getElementById("out_tomaraoSuffix").innerText = suffix;
+            document.getElementById("out_tomaraoCountry").innerText = country;
+            document.getElementById("out_tomaraoProvince").innerText = province;
+            document.getElementById("out_tomaraoMunicipality").innerText = municipality;
+            document.getElementById("out_tomaraoBarangay").innerText = barangay;
+            document.getElementById("out_tomaraoSubd").innerText = subd;
+            document.getElementById("out_tomaraoBirthday").innerText = birthday;
+            document.getElementById("out_tomaraoAge").innerText = age;
+        }
+
+        function tomaraoViewInformation() {
+            var fields = [
+                "tomaraoFirstName", "tomaraoMiddleName", "tomaraoLastName",
+                "tomaraoCountry", "tomaraoProvince",
+                "tomaraoMunicipality", "tomaraoBarangay", "tomaraoSubd",
+                "tomaraoBirthday", "tomaraoAge"
+            ];
+
+            var allFilled = true;
+            fields.forEach(function(field) {
+                var value = document.getElementById(field).value;
+                if (!value) {
+                    allFilled = false;
+                    alert(field.replace("tomarao", "").replace(/([A-Z])/g, ' $1').trim() + " is required.");
+                    return;
+                }
+                document.getElementById("out_" + field).innerText = value;
+            });
+
+            if (!allFilled) return;
+        }
+
+       function tomaraoSubmitInformation(event) {
+            var fields = [
+                "tomaraoFirstName", "tomaraoMiddleName", "tomaraoLastName",
+                "tomaraoSuffix", "tomaraoCountry", "tomaraoProvince",
+                "tomaraoMunicipality", "tomaraoBarangay", "tomaraoSubd",
+                "tomaraoBirthday", "tomaraoAge"
+            ];
+
+            var allFilled = true;
+            fields.forEach(function(field) {
+                var value = document.getElementById(field).value;
+                if (!value) {
+                    allFilled = false;
+                    alert(field.replace("tomarao", "").replace(/([A-Z])/g, ' $1').trim() + " is required.");
+                    return;
+                }
+            });
+
+            if (!allFilled) {
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1> REGISTRATION FORM </h1>
+
+    <form>
+    <h2>
+        <table>
+        <tr>
+            <td><label for="tomaraoFirstName">FIRST NAME</label></td>
+            <td><input type="text" id="tomaraoFirstName" name="tomaraoFirstName" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoMiddleName">MIDDLE NAME</label></td>
+            <td><input type="text" id="tomaraoMiddleName" name="tomaraoMiddleName" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoLastName">LAST NAME</label></td>
+            <td><input type="text" id="tomaraoLastName" name="tomaraoLastName" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoSuffix">SUFFIX</label></td>
+            <td><input type="text" id="tomaraoSuffix" name="tomaraoSuffix" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoCountry">COUNTRY</label></td>
+            <td><input type="text" id="tomaraoCountry" name="tomaraoCountry" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoProvince">PROVINCE</label></td>
+            <td><input type="text" id="tomaraoProvince" name="tomaraoProvince" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoMunicipality">CITY/MUNICIPALITY</label></td>
+            <td><input type="text" id="tomaraoMunicipality" name="tomaraoMunicipality" required></td>
+        </tr>
+        <p>
+            <td><label for="tomaraoBarangay">BARANGAY</label></td>
+            <td><input type="text" id="tomaraoBarangay" name="tomaraoBarangay" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoSubd">SUBD./HOUSE #/ST.</label></td>
+            <td><input type="text" id="tomaraoSubd" name="tomaraoSubd" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoBirthday">BIRTHDAY</label></td>
+            <td><input type="text" id="tomaraoBirthday" name="tomaraoBirthday" required></td>
+        </tr>
+        <tr>
+            <td><label for="tomaraoAge">AGE</label></td>
+            <td><input type="text" id="tomaraoAge" name="tomaraoAge" required></td>
+        </tr>
+        </table>
+    </h2>
+    </form>
+
+    <p>
+        <button type="button" class="viewButton" onclick="tomaraoViewInformation()"> VIEW </button>
+    </p><br>
+
+<!---outputInfo-->
+
+    <h2>YOUR INFORMATION</h2>
+    <p id="output">
+        <label class="outputLabel">FIRST NAME:</label>
+        <span id="out_tomaraoFirstName"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">MIDDLE NAME:</label>
+        <span  id="out_tomaraoMiddleName"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">LAST NAME:</label>
+        <span  id="out_tomaraoLastName"></span>
+    </p>
+    <p id="output">
+        <td><label class="outputLabel">SUFFIX:</label></td>
+        <span  id="out_tomaraoSuffix"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">COUNTRY:</label></td>
+        <span  id="out_tomaraoCountry"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">PROVINCE:</label>
+        <span  id="out_tomaraoProvince"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">CITY/MUNICIPALITY:</label></td>
+        <span  id="out_tomaraoMunicipality"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">BARANGAY:</label>
+        <span  id="out_tomaraoBarangay"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">SUBD./HOUSE #/ST.:</label>
+        <span  id="out_tomaraoSubd"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">BIRTHDAY:</label>
+        <span  id="out_tomaraoBirthday"></span>
+    </p>
+    <p id="output">
+        <label class="outputLabel">AGE:</label></td>
+        <span  id="out_tomaraoAge"></span>
+    </p>
+    </table><br>
+
+    <p>
+        <a href="tomaraoMainPage.html" target="_self">
+            <button type="submit" class="submitButton" onclick="tomaraoSubmitInformation(event)"> SUBMIT </button>
+        </a>
+    </p>
+</body>
+</html>
