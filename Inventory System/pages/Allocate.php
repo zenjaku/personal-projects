@@ -1,153 +1,316 @@
 <?php
-require_once "server/allocate.php";
-include 'admin/auth.php';
+require_once "server/drop-downs/allocate.php";
+require_once "server/drop-downs/transfer.php";
+
+// Store results in arrays to reuse them multiple times
+// $employeeIDs = [];
+// while ($row = mysqli_fetch_assoc($employeeIDResult)) {
+//     $employeeIDs[] = $row;
+// }
+
+$assets = [];
+while ($row = mysqli_fetch_assoc($assetsResult)) {
+    $assets[] = $row;
+}
+
+$transfer = [];
+while ($row = mysqli_fetch_assoc($transferIDResult)) {
+    $transfer[] = $row;
+}
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<div class="container py-5">
+    <div class="row">
+        <!-- Allocate PC -->
+        <div class="col-4">
+            <form action="/allocation-assets" method="post" id="allocateForm">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Allocation of PC</h2>
+                    </div>
+                    <div class="card-body my-5">
+                        <div class="d-flex flex-column justify-content-center align-content-center gap-3">
+                            <select name="employee_id" id="allocate_employee_id" class="form-select" required>
+                                <option value="">Employee ID</option>
+                                <?php foreach ($employeeIDs as $row): ?>
+                                    <option value="<?= htmlspecialchars($row['employee_id']) ?>">
+                                        <?= htmlspecialchars($row['employee_id']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Allocate</title>
-</head>
-
-<body>
-    <div class="container my-5">
-        <div class="card">
-            <div class="card-header">
-                <h2>Allocation of Assets</h2>
-            </div>
-            <form action="server/store_allocate.php" method="post" class="d-flex flex-column" id="allocateForm">
-                <div class="card-body my-5">
-                    <div class="d-flex justify-content-center align-content-center gap-3">
-                        <select name="employee_id" id="employee_id" class="form-select w-25" required>
-                            <option value="Employee ID">Employee ID</option>
-                            <?php while ($row = mysqli_fetch_assoc($employeeID)): ?>
-                                <option value="<?= htmlspecialchars($row['employee_id']) ?>" <?= $row['employee_id'] === $id ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($row['employee_id']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
-
-                        <select name="assets" id="assets" class="form-select w-25" required>
-                            <option value="Assets">Assets</option>
-                            <?php while ($row = mysqli_fetch_assoc($assetsResult)): ?>
-                                <option id="assets_value" value="<?= htmlspecialchars($row['assets']) ?>"
-                                    <?= $row['assets'] === $asset_name ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($row['assets']) ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
-
-                        <div class="form-floating">
-                            <input type="text" name="sn" class="form-control" id="getAssets" required>
-                            <label for="getAssets">Serial Number</label>
+                            <select name="cname_id" id="allocate_cname_id" class="form-select computer-select" required>
+                                <option value="">Select a Computer</option>
+                                <?php foreach ($assets as $row): ?>
+                                    <option value="<?= htmlspecialchars($row['cname_id']) ?>">
+                                        <?= htmlspecialchars($row['cname']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
-
-                    <div class="d-flex flex-column gap-4 py-4" id="inventoryDashboard">
-                        <table class="table text-center">
-                            <thead class="table-dark" id="showTitle">
-                                <!-- <tr>
-                                    <th scope="col">Assets ID</th>
-                                    <th scope="col">Assets</th>
-                                    <th scope="col">Brand</th>
-                                    <th scope="col">Model</th>
-                                    <th scope="col">S/N</th>
-                                </tr> -->
-                            </thead>
-                            <tbody id="showdata">
-                                <script>
-                                    function matchAssets() {
-                                        const assets = document.getElementById('assets');
-                                        const getAssets = document.getElementById('getAssets'); // Dropdown of assets
-                                        const confirmAssets = document.getElementById('c_assets');  // Asset displayed in the table
-                                        const sn = document.getElementById('sn');
-
-                                        if (!assets || !confirmAssets || !getAssets || !sn) return;
-
-                                        console.log("Assets Value:", assets.value);
-                                        console.log("Confirm Assets Value:", confirmAssets.value);
-                                        console.log("S/N Value:", getAssets.value);
-                                        console.log("Confirm S/N Value:", sn.value);
-
-                                        if (getAssets.value !== sn.value) {
-                                            sn.classList.add('text-white', 'bg-danger');
-                                        } else {
-                                            sn.classList.remove('text-white', 'bg-danger');
-                                        }
-
-                                        if (assets.value !== confirmAssets.value) {
-                                            confirmAssets.classList.add('text-white', 'bg-danger');
-                                        } else {
-                                            confirmAssets.classList.remove('text-white', 'bg-danger');
-                                        }
-                                    }
-
-                                    $(document).ready(function () {
-                                        $('#getAssets').on("keyup", function () {
-                                            var getAssets = $(this).val().trim();
-
-                                            if (getAssets === "") {
-                                                $("#showdata").html(""); // Clear the table when input is empty
-                                                return;
-                                            }
-
-                                            $.ajax({
-                                                method: 'POST',
-                                                url: 'server/inventory.php', // Make sure this path is correct
-                                                data: { name: getAssets },
-                                                success: function (response) {
-                                                    try {
-                                                        var data = JSON.parse(response);
-
-                                                        if (data.message) {
-                                                            $("#showdata").html("<tr><td colspan='6'>No assets found</td></tr>");
-                                                        } else {
-                                                            var html = '';
-                                                            data.forEach(function (item) {
-                                                                html += "<tr id='show'>";
-                                                                html += "<td><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='assets_id' id='assets_id' value='" + item.assets_id + "'><label for='assets_id'>Assets ID</label></div></td>";
-                                                                html += "<td><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='c_assets' id='c_assets' value='" + item.assets + "'><label for='c_assets'>Assets</label></div></td>";
-                                                                html += "<td><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='brand' id='brand' value='" + item.brand + "'><label for='brand'>Brand</label></div></td>";
-                                                                html += "<td><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='model' id='model' value='" + item.model + "'><label for='model'>Model</label></div></td>";
-                                                                html += "<td><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='sn' id='sn' value='" + item.sn + "'><label for='sn'>Serial Number</label></div></td>";
-                                                                html += "</tr>";
-                                                            });
-                                                            $("#showdata").html(html); // Inject response into tbody
-                                                            matchAssets(); // Validate the assets after updating the table
-                                                        }
-                                                    } catch (e) {
-                                                        console.error("Error parsing JSON response", e);
-                                                        $("#showdata").html("<tr><td colspan='5'>An error occurred while fetching data.</td></tr>");
-                                                    }
-                                                },
-                                                error: function () {
-                                                    $("#showdata").html("<tr><td colspan='5'>An error occurred while fetching data.</td></tr>");
-                                                }
-                                            });
-                                        });
-
-                                        $('#assets').on('change', function () {
-                                            matchAssets(); // Validate the assets when the dropdown value changes
-                                        });
-                                    });
-                                </script>
-                            </tbody>
-                        </table>
+                    <div class="card-footer d-flex justify-content-end gap-3">
+                        <button type="submit" name="allocate" class="btn btn-dark">Submit</button>
+                        <button type="reset" class="btn btn-danger resetForm">Cancel</button>
                     </div>
                 </div>
+            </form>
+        </div>
 
-                <div class="card-footer d-flex justify-content-end gap-3">
-                    <button type="submit" name="allocate" class="btn btn-dark">Submit</button>
-                    <button type="reset" class="btn btn-danger" onclick="parent.location.href=''">Cancel</button>
+        <!-- Transfer PC -->
+        <div class="col-4">
+            <form action="/transfer-assets" method="post" id="transferForm">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Transfer PC</h2>
+                    </div>
+                    <div class="card-body my-5">
+                        <div class="d-flex flex-column justify-content-center align-content-center gap-3">
+                            <label for="transfer_employee_id"> From </label>
+                            <select name="employee_id" id="transfer_employee_id" class="form-select" required>
+                                <option value="">Employee ID</option>
+                                <?php foreach ($transferEmployeeID as $row): ?>
+                                    <option value="<?= htmlspecialchars($row['employee_id']) ?>">
+                                        <?= htmlspecialchars($row['employee_id']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <label for="transfer_employee_id"> To </label>
+                            <select name="transfer_employee_id" id="transfer_employee_id"
+                                class="form-select computer-select" required>
+                                <option value="">Employee ID</option>
+                                <?php foreach ($transfer as $row): ?>
+                                    <option value="<?= htmlspecialchars($row['employee_id']) ?>">
+                                        <?= htmlspecialchars($row['employee_id']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-end gap-3">
+                        <button type="submit" name="transfer" class="btn btn-dark">Submit</button>
+                        <button type="reset" class="btn btn-danger resetForm">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Return PC -->
+        <div class="col-4">
+            <form action="/return-assets" method="post" id="returnForm">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Returned PC</h2>
+                    </div>
+                    <div class="card-body my-5">
+                        <div class="d-flex flex-column justify-content-center align-content-center gap-3">
+                            <select name="employee_id" id="return_employee_id" class="form-select" required>
+                                <option value="">Employee ID</option>
+                                <?php foreach ($employeeIDs as $row): ?>
+                                    <option value="<?= htmlspecialchars($row['employee_id']) ?>">
+                                        <?= htmlspecialchars($row['employee_id']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <select name="cname_id" id="return_cname_id" class="form-select computer-select" required>
+                                <option value="">Select a Computer</option>
+                                <?php foreach ($assets as $row): ?>
+                                    <option value="<?= htmlspecialchars($row['cname_id']) ?>">
+                                        <?= htmlspecialchars($row['cname']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-end gap-3">
+                        <button type="submit" name="return" class="btn btn-dark">Submit</button>
+                        <button type="reset" class="btn btn-danger resetForm">Cancel</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <div class="row">
+        <div class="d-flex flex-column gap-4 py-4" id="inventoryDashboard">
+            <table class="table text-center">
+                <tbody id="showdata">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const allocateForm = document.getElementById("allocateForm");
+        const transferForm = document.getElementById("transferForm");
+        const returnForm = document.getElementById("returnForm");
+        const showData = document.getElementById("showdata");
+        const resetButtons = document.querySelectorAll(".resetForm"); // Selects all buttons with the class 'resetForm'
 
-</body>
+        // Loop through all reset buttons and add event listener
+        resetButtons.forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default reset behavior
 
-</html>
+                // Reset form fields
+                allocateForm.reset();
+                transferForm.reset();
+                returnForm.reset();
+
+                // Clear dynamically populated data
+                showData.innerHTML = "";
+            });
+        });
+    });
+</script>
+<script>
+    // script for allocating pc
+    $(document).ready(function () {
+
+        $('#allocate_cname_id').on("change", function () {
+            var assetID = $(this).val().trim();
+            var formID = $(this).closest('form').attr('id');
+
+            if (assetID === "") {
+                $("#showdata").html("");
+                return;
+            }
+
+            $.ajax({
+                method: 'POST',
+                url: 'server/jquery/employee_allocation.php',
+                data: {
+                    assetID: assetID,
+                    formType: formID
+                },
+                success: function (response) {
+                    try {
+                        var data = JSON.parse(response);
+                        var html = '';
+
+                        if (data.message) {
+                            html = "<tr><td colspan='6'>No assets found</td></tr>";
+                        } else {
+                            data.forEach(function (item) {
+                                html += "<tr>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='assets_id' value='" + item.assets_id + "'><label>Assets ID</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='c_assets' value='" + item.assets + "'><label>Assets</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='brand' value='" + item.brand + "'><label>Brand</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='model' value='" + item.model + "'><label>Model</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='sn' value='" + item.sn + "'><label>Serial Number</label></div></td>";
+                                html += "</tr>";
+                            });
+                        }
+                        $("#showdata").html(html);
+                    } catch (e) {
+                        console.error("Error parsing JSON response", e);
+                        $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                    }
+                },
+                error: function () {
+                    $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                }
+            });
+        });
+    });
+
+    // script for transferring pc
+    $(document).ready(function () {
+        $('#transfer_employee_id').on("change", function () {
+            var transferID = $(this).val().trim();
+            var formID = $(this).closest('form').attr('id');
+
+            if (transferID === "") {
+                $("#showdata").html("");
+                return;
+            }
+
+            $.ajax({
+                method: 'POST',
+                url: 'server/jquery/transfer_allocation.php',
+                data: {
+                    transferID: transferID,
+                    formType: formID
+                },
+                success: function (response) {
+                    try {
+                        var data = JSON.parse(response);
+                        var html = '';
+
+                        if (data.message) {
+                            html = "<tr><td colspan='6'>No assets found</td></tr>";
+                        } else {
+                            data.forEach(function (item) {
+                                html += "<tr>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='assets_id' value='" + item.assets_id + "'><label>Assets ID</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='c_assets' value='" + item.assets + "'><label>Assets</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='brand' value='" + item.brand + "'><label>Brand</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='model' value='" + item.model + "'><label>Model</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='sn' value='" + item.sn + "'><label>Serial Number</label></div></td>";
+                                html += "</tr>";
+                            });
+                        }
+                        $("#showdata").html(html);
+                    } catch (e) {
+                        console.error("Error parsing JSON response", e);
+                        $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                    }
+                },
+                error: function () {
+                    $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                }
+            });
+        });
+    });
+
+    // script for returning pc
+    $(document).ready(function () {
+        $('#allocate_cname_id').on("change", function () {
+            var assetID = $(this).val().trim();
+            var formID = $(this).closest('form').attr('id');
+
+            if (assetID === "") {
+                $("#showdata").html("");
+                return;
+            }
+
+            $.ajax({
+                method: 'POST',
+                url: 'server/jquery/employee_allocation.php',
+                data: {
+                    assetID: assetID,
+                    formType: formID
+                },
+                success: function (response) {
+                    try {
+                        var data = JSON.parse(response);
+                        var html = '';
+
+                        if (data.message) {
+                            html = "<tr><td colspan='6'>No assets found</td></tr>";
+                        } else {
+                            data.forEach(function (item) {
+                                html += "<tr>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='assets_id' value='" + item.assets_id + "'><label>Assets ID</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='c_assets' value='" + item.assets + "'><label>Assets</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='brand' value='" + item.brand + "'><label>Brand</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='model' value='" + item.model + "'><label>Model</label></div></td>";
+                                html += "<td class='p-4'><div class='form-floating'><input type='text' class='form-control input-fields' readonly name='sn' value='" + item.sn + "'><label>Serial Number</label></div></td>";
+                                html += "</tr>";
+                            });
+                        }
+                        $("#showdata").html(html);
+                    } catch (e) {
+                        console.error("Error parsing JSON response", e);
+                        $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                    }
+                },
+                error: function () {
+                    $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                }
+            });
+        });
+    });
+</script>

@@ -1,121 +1,64 @@
-<?php
-// require_once "server/inventory.php";
-include 'admin/auth.php';
-?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory</title>
-</head>
-
-<body>
-    <div class="container-fluid table-responsive d-flex flex-column gap-4" id="inventoryDashboard">
-        <div class="input-group">
-            <div class="form-outline" id="searchAssets">
-                <input type="text" id="getAssets" placeholder="Search Assets using Serial Number"
-                    class="form-control border border-black border-2 input-search" />
-            </div>
+<div class="container-fluid table-responsive d-flex flex-column gap-4" id="inventoryDashboard">
+    <div class="input-group">
+        <div class="form-outline" id="searchAssets">
+            <input type="text" id="getAssets" placeholder="SEARCH BY USING COMPUTER ID OR COMPUTER NAME"
+                class="form-control border border-black border-2 input-search" />
         </div>
-        <div class="admin-btn d-flex justify-content-between align-items-center">
-            <h2>Inventory Dashboard</h2>
-            <div class="d-flex gap-2">
-                <button class="btn btn-dark w-auto" id="inventoryBtn">Inventory Count</button>
-                <a href="index.php?page=add">
-                    <button type="button" class="btn btn-dark w-auto" id="addAssets">Add Assets</button>
-                </a>
-            </div>
+    </div>
+    <div class="admin-btn d-flex justify-content-between align-items-center">
+        <h2>Inventory Dashboard</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-dark w-auto" id="inventoryBtn">Stocks</button>
+            <a href="/add">
+                <button type="button" class="btn btn-dark w-auto" id="addAssets">Add Assets</button>
+            </a>
         </div>
-        <table class="table text-center">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">Assets ID</th>
-                    <th scope="col">Assets</th>
-                    <th scope="col">Brand</th>
-                    <th scope="col">Model</th>
-                    <th scope="col">S/N</th>
-                    <th scope="col">History</th>
-                </tr>
-            </thead>
-            <tbody id="showdata">
+    </div>
+    <table class="table text-center table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Computer ID</th>
+                <th scope="col">Computer Name</th>
+                <th scope="col">Specifications</th>
+                <th scope="col">History</th>
+            </tr>
+        </thead>
+        <tbody id="showdata">
 
-                <?php
+            <?php
+            $fetchInventory = mysqli_query($conn, "SELECT * FROM computer  GROUP BY cname ORDER BY created_at");
 
-                $limit = 5; // Display 10 records per page
-                $pages = isset($_GET['pages']) && (int) $_GET['pages'] > 0 ? (int) $_GET['pages'] : 1; // Ensure page is positive
-                $offset = ($pages - 1) * $limit;
-
-                // Query to get the total number of records (assets)
-                $totalResult = mysqli_query($conn, "SELECT COUNT(DISTINCT assets) as total FROM assets");
-                if (!$totalResult) {
-                    die("Error fetching total rows: " . mysqli_error($conn));
-                }
-
-                $totalRows = mysqli_fetch_assoc($totalResult)['total'] ?? 0;
-                $totalPages = ceil($totalRows / $limit);
-
-                // Adjust pages if out of bounds
-                if ($pages > $totalPages) {
-                    $pages = $totalPages > 0 ? $totalPages : 1; // Default to page 1 if no records
-                }
-
-                $fetchInventory = mysqli_query($conn, "SELECT * FROM assets ORDER BY created_at LIMIT $limit OFFSET $offset");
+            if (mysqli_num_rows($fetchInventory) == 0) {
+                // Display message when no data is found
+                echo "<tr><td colspan='6'>No assets found.</td></tr>";
+            } else {
                 while ($result = mysqli_fetch_assoc($fetchInventory)) {
                     ?>
                     <tr>
-                        <td><?= $result['assets_id'] ?></td>
-                        <td><?= $result['assets'] ?></td>
-                        <td><?= $result['brand'] ?></td>
-                        <td><?= $result['model'] ?></td>
-                        <td><?= $result['sn'] ?></td>
                         <td>
-                            <a href="history.php?assets_id=<?= $result['assets_id'] ?>">
-                                <button type="button" class="btn btn-dark" id="historyBtn">View</button>
+                            <p class="my-1"><?= $result['cname_id'] ?></p>
+                        </td>
+                        <td>
+                            <p class="my-1"><?= $result['cname'] ?></p>
+                        </td>
+                        <td>
+                            <a href="/specs?cname=<?= $result['cname'] ?>">
+                                <button type="button" class="btn btn-dark" id="specsBtn">View</button>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/history?cname_id=<?= $result['cname_id'] ?>">
+                                <button type="button" class="btn btn-warning" id="historyBtn">View</button>
                             </a>
                         </td>
                     </tr>
-
                     <?php
                 }
-                ?>
-            </tbody>
-        </table>
-        <!-- Pagination Links -->
-        <div class="text-white">
-            <nav>
-                <ul class="bg-dark rounded p-2 d-flex justify-content-center align-items-center gap-3 border border-2 border-white"
-                    id="pagination">
-                    <li class="page-item <?= ($pages == 1) ? 'disabled' : '' ?>">
-                        <a class="page-link" href="?pages=1" title="First">
-                            <span aria-hidden="true">&laquo;&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item <?= ($pages == 1) ? 'disabled' : '' ?>">
-                        <a class="page-link" href="?pages=<?= $pages - 1 ?>" title="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <li class="page-item <?= ($pages == $i) ? 'active' : '' ?>">
-                            <a class="page-link" href="?pages=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
-                    <li class="page-item <?= ($pages == $totalPages) ? 'disabled' : '' ?>">
-                        <a class="page-link" href="?pages=<?= $pages + 1 ?>" title="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item <?= ($pages == $totalPages) ? 'disabled' : '' ?>">
-                        <a class="page-link" href="?pages=<?= $totalPages ?>" title="Last">
-                            <span aria-hidden="true">&raquo;&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
+            }
+            ?>
+
+        </tbody>
+    </table>
     <script>
         $(document).ready(function () {
             $('#getAssets').on("keyup", function () {
@@ -129,30 +72,28 @@ include 'admin/auth.php';
                     // Option 2: Fetch all assets (Optional)
                     $.ajax({
                         method: 'POST',
-                        url: 'server/inventory.php', // Make sure this path is correct
+                        url: 'server/jquery/inventory.php', // Make sure this path is correct
                         data: { name: '' }, // Send empty string to fetch all assets
                         success: function (response) {
                             var data = JSON.parse(response);
 
                             if (data.message) {
-                                $("#showdata").html("<tr><td colspan='6'>No assets found</td></tr>");
+                                $("#showdata").html("<tr><td colspan='4'>No assets found</td></tr>");
                             } else {
                                 var html = '';
                                 data.forEach(function (item) {
                                     html += "<tr>";
-                                    html += "<td>" + item.assets_id + "</td>";
-                                    html += "<td>" + item.assets + "</td>";
-                                    html += "<td>" + item.brand + "</td>";
-                                    html += "<td>" + item.model + "</td>";
-                                    html += "<td>" + item.sn + "</td>";
-                                    html += "<td><a href='history.php?assets_id=" + item.assets_id + "'><button type='button' class='btn btn-dark' id='historyBtn'>View</button></a></td>";
+                                    html += "<td>" + item.cname_id + "</td>";
+                                    html += "<td>" + item.cname + "</td>";
+                                    html += "<td><a href='/specs?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-dark' id='specsBtn'>View</button></a></td>";
+                                    html += "<td><a href='/history?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-warning' id='historyBtn'>View</button></a></td>";
                                     html += "</tr>";
                                 });
                                 $("#showdata").html(html); // Inject response into tbody
                             }
                         },
                         error: function () {
-                            $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                            $("#showdata").html("<tr><td colspan='4'>An error occurred while fetching data.</td></tr>");
                         }
                     });
 
@@ -162,31 +103,29 @@ include 'admin/auth.php';
                 // Continue with the original search if input is not empty
                 $.ajax({
                     method: 'POST',
-                    url: 'server/inventory.php', // Make sure this path is correct
+                    url: 'server/jquery/inventory.php', // Make sure this path is correct
                     data: { name: getAssets },
                     success: function (response) {
                         try {
                             var data = JSON.parse(response);
 
                             if (data.message) {
-                                $("#showdata").html("<tr><td colspan='6'>No assets found</td></tr>");
+                                $("#showdata").html("<tr><td colspan='4'>No assets found</td></tr>");
                             } else {
                                 var html = '';
                                 data.forEach(function (item) {
                                     html += "<tr>";
-                                    html += "<td>" + item.assets_id + "</td>";
-                                    html += "<td>" + item.assets + "</td>";
-                                    html += "<td>" + item.brand + "</td>";
-                                    html += "<td>" + item.model + "</td>";
-                                    html += "<td>" + item.sn + "</td>";
-                                    html += "<td><a href='history.php?assets_id=" + item.assets_id + "'><button type='button' class='btn btn-dark' id='historyBtn'>View</button></a></td>";
+                                    html += "<td>" + item.cname_id + "</td>";
+                                    html += "<td>" + item.cname + "</td>";
+                                    html += "<td><a href='/specs?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-dark' id='historyBtn'>View</button></a></td>";
+                                    html += "<td><a href='/history?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-warning' id='historyBtn'>View</button></a></td>";
                                     html += "</tr>";
                                 });
                                 $("#showdata").html(html); // Inject response into tbody
                             }
                         } catch (e) {
                             console.error("Error parsing JSON response", e);
-                            $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                            $("#showdata").html("<tr><td colspan='4'>An error occurred while fetching data.</td></tr>");
                         }
                     },
                     error: function () {
@@ -203,23 +142,23 @@ include 'admin/auth.php';
 
     <div class="overlay hidden" id="overlay"></div>
     <div id="inventory" class="bg-body-tertiary w-75 hidden">
-        <div class="container p-3 table-responsive">
-            <table class="table">
+        <div class="container p-3">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">Hardware</th>
-                        <!-- <th scope="col">Serial Number</th> -->
-                        <th scope="col">Count</th>
+                        <th scope="col">COMPONENTS</th>
+                        <th scope="col">COUNT</th>
+                        <th scope="col">AVAILABLE PART</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $limit = 1; // Display 10 records per page
-                    $pagination = isset($_GET['page']) && (int) $_GET['page'] > 0 ? (int) $_GET['page'] : 1; // Ensure page is positive
+                    $limit = 10; // Display 10 records per page
+                    $pagination = isset($_GET['page']) && (int) $_GET['page'] > 0 ? (int) $_GET['page'] : 1;
                     $offset = ($pagination - 1) * $limit;
 
-                    // Query to get the total number of records (assets)
-                    $totalResult = mysqli_query($conn, "SELECT COUNT(DISTINCT assets) as total FROM assets");
+                    // Query to get the total number of records (counting all assets)
+                    $totalResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM assets");
                     if (!$totalResult) {
                         die("Error fetching total rows: " . mysqli_error($conn));
                     }
@@ -229,11 +168,22 @@ include 'admin/auth.php';
 
                     // Adjust pagination if out of bounds
                     if ($pagination > $totalPages) {
-                        $pagination = $totalPages > 0 ? $totalPages : 1; // Default to page 1 if no records
+                        $pagination = $totalPages > 0 ? $totalPages : 1;
                     }
 
-                    // Query to get the assets with pagination
-                    $assetQuery = "SELECT assets, COUNT(*) as count FROM assets GROUP BY assets LIMIT $limit OFFSET $offset";
+                    // Query to count occurrences of each asset and compare with computer table (cname_id)
+                    $assetQuery = "
+                        SELECT 
+                            a.assets, 
+                            COUNT(a.assets_id) AS total_assets, 
+                            COUNT(c.assets_id) AS allocated_assets, 
+                            (COUNT(a.assets_id) - COUNT(c.assets_id)) AS in_stock
+                        FROM assets a 
+                        LEFT JOIN computer c ON a.assets_id = c.assets_id AND c.cname_id IS NOT NULL
+                        GROUP BY a.assets
+                        LIMIT $limit OFFSET $offset
+                    ";
+
                     $result = mysqli_query($conn, $assetQuery);
                     if (!$result) {
                         die("Error fetching assets: " . mysqli_error($conn));
@@ -241,18 +191,18 @@ include 'admin/auth.php';
 
                     // Generate table rows
                     while ($row = mysqli_fetch_assoc($result)) {
-                        $hardware = $row['assets'];
-                        // $serialNumber = $row['sn'];
-                        $count = $row['count'];
+                        $assetName = $row['assets'];
+                        $totalAssets = $row['total_assets'];
+                        $allocatedAssets = $row['allocated_assets'];
+                        $stock = $row['in_stock']; // Subtract allocated assets from total and check for available stock
                         ?>
                         <tr>
-                            <td><?= htmlspecialchars($hardware, ENT_QUOTES, 'UTF-8') ?></td>
-                            <!-- <td><?= htmlspecialchars($serialNumber, ENT_QUOTES, 'UTF-8') ?></td> -->
-                            <td><?= htmlspecialchars($count, ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($assetName, ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($totalAssets, ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($stock, ENT_QUOTES, 'UTF-8') ?></td>
                         </tr>
                     <?php } ?>
                 </tbody>
-
             </table>
 
             <!-- Pagination Links -->
@@ -288,9 +238,6 @@ include 'admin/auth.php';
                     </ul>
                 </nav>
             </div>
-
         </div>
     </div>
-</body>
-
-</html>
+</div>

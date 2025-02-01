@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     count();
     initSpinner();
     checkScreenWidth();
-    cleanUrl();
-
+    editBtn();
 })
 
 window.addEventListener('resize', checkScreenWidth);
@@ -18,66 +17,31 @@ function checkScreenWidth() {
     }
 }
 
-// Function to clean the URL
-function cleanUrl() {
-    const currentPath = window.location.href;
+function editBtn() {
+    const editBtn = document.getElementById('editBtn');
+    const selectField = document.getElementById('allocation-status');
+    if (!editBtn || !selectField) return;
 
-    //  Only clean URLs with 'index.php?page='
-    if (currentPath.includes('index.php?page=')) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page');
+    console.log(editBtn, selectField);
 
-        // Ensure 'page' parameter exists
-        if (page) {
-            const newUrl = `${window.location.origin}/${page}`;
+    // Initially disable the select field
+    selectField.disabled = true;
 
-            //   Update the URL without reloading the page
-            if (currentPath !== newUrl) {
-                history.replaceState(null, '', newUrl);
-                console.log('URL cleaned to:', newUrl);
-            }
+    // Add click event listener for the edit button
+    editBtn.addEventListener('click', function () {
+        // Toggle the disabled state of the select field
+        selectField.disabled = !selectField.disabled; // If it's disabled, enable it; if it's enabled, disable it
+
+        // Toggle the text content of the edit button
+        if (selectField.disabled) {
+            editBtn.textContent = 'Edit';
+            editBtn.classList.remove('bg-danger'); // If the select field is disabled, show 'Edit'
+        } else {
+            editBtn.textContent = 'Cancel';
+            editBtn.classList.add('bg-danger'); // If the select field is enabled, show 'Cancel'
         }
-    } else {
-        console.log('URL is already clean:', currentPath);
-    }
-
-    if (currentPath.includes('history.php?assets_id=')) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('assets_id');
-
-        // Ensure 'page' parameter exists
-        if (page) {
-            const newUrl = `${window.location.origin}/${page}`;
-
-            //   Update the URL without reloading the page
-            if (currentPath !== newUrl) {
-                history.replaceState(null, '', newUrl);
-                console.log('URL cleaned to:', newUrl);
-            }
-        }
-    } else {
-        console.log('URL is already clean:', currentPath);
-    }
-
-    if (currentPath.includes('view.php?employee_id=')) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('employee_id');
-
-        // Ensure 'page' parameter exists
-        if (page) {
-            const newUrl = `${window.location.origin}/${page}`;
-
-            //   Update the URL without reloading the page
-            if (currentPath !== newUrl) {
-                history.replaceState(null, '', newUrl);
-                console.log('URL cleaned to:', newUrl);
-            }
-        }
-    } else {
-        console.log('URL is already clean:', currentPath);
-    }
+    });
 }
-
 
 function initSpinner() {
     const spinner = document.querySelector('#global-spinner');
