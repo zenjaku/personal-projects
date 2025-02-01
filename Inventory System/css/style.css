@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+table,
+button {
+    text-transform: uppercase !important;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
 }
@@ -134,7 +139,7 @@ a.sidebar-link {
     position: relative;
     transition: all 0.35s;
     display: block;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
 }
 
 a.sidebar-link:hover {
@@ -217,17 +222,18 @@ a.sidebar-link:hover {
 
 .form-floating label {
     position: absolute;
-    top: 0;
-    left: 0.5rem;
+    top: 1em;
+    left: .9rem;
     padding: 0 0.5rem;
     pointer-events: none;
     transition: all 0.2s ease;
-    /* background: white; */
+    background: white;
+    height: 23px;
 }
 
 .form-floating input:focus+label,
 .form-floating input:not(:placeholder-shown)+label {
-    top: -.3rem;
+    top: 0rem;
     left: 1rem;
     font-size: 1rem;
     color: #495057;
@@ -304,13 +310,59 @@ a.sidebar-link:hover {
 
 #inventory {
     position: absolute;
-    top: 40%;
+    top: 10em;
     left: 15%;
     z-index: 999;
 }
 
+#addAssets input.group {
+    width: 270px !important;
+}
+
+#addAssets button.btn-warning,
+#addAssets button.cancel {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+}
+
+table {
+    border: 3px solid #1b1b1b !important;
+}
+
+#show td input.input-fields {
+    width: 100% !important;
+}
+
+.parts-search {
+    width: 350px;
+    height: 50px;
+}
+
+#buildForm .form-select {
+    width: 300px !important;
+}
+
+
+#showassets input[readonly] {
+    background-color: #dbd8d8;
+}
+#showassets input[readonly]:focus {
+    /* border: none; */
+    outline: none !important;
+}
+
+.employee-id {
+    width: 104px;
+}
+
+#registerForm label small {
+    font-size: .8em;
+}
+
+/* 
 @media screen and (max-width: 769px) {
     #registerForm input {
         width: 300px;
     }
-}
+} */

@@ -7,13 +7,11 @@ Dotenv\Dotenv::createImmutable(__DIR__ . '/../')->load();
 session_start();
 
 // Fetch credentials from the environment
-
 $validUsername = $_ENV['DB_USERNAME'];
 $validPasswordHash = $_ENV['DB_PASSWORD'];
 
 // Handle the login process
 if (isset($_POST['login'])) {
-    include 'create_tbl.php';
     // Trim and sanitize user input
     $inputUsername = trim($_POST['username']);
     $inputPassword = trim($_POST['password']);
@@ -22,7 +20,7 @@ if (isset($_POST['login'])) {
     if ($inputUsername !== $validUsername) {
         $_SESSION['status'] = 'failed';
         $_SESSION['failed'] = 'Incorrect username';
-        header("Location: ../index.php?page=login");
+        header("Location: /login");
         exit();
     }
 
@@ -30,7 +28,7 @@ if (isset($_POST['login'])) {
     if (!password_verify($inputPassword, $validPasswordHash)) {
         $_SESSION['status'] = 'failed';
         $_SESSION['failed'] = 'Incorrect password';
-        header("Location: ../index.php?page=login");
+        header("Location: /login");
         exit();
     }
 
@@ -44,6 +42,6 @@ if (isset($_POST['login'])) {
     $_SESSION['success'] = "Welcome, $validUsername";
 
     // Redirect to the homepage after successful login
-    echo "<script> parent.location.href='../index.php'; </script>";
+    echo "<script> parent.location.href='/'; </script>";
 }
 ?>
