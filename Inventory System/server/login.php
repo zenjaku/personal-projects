@@ -1,7 +1,7 @@
 <?php
 // Load the .env file
 require_once '../vendor/autoload.php';
-Dotenv\Dotenv::createImmutable(__DIR__ . '/../')->load();
+Dotenv\Dotenv::createImmutable(__DIR__ . '/../admin/')->load();
 
 // Start the session
 session_start();
