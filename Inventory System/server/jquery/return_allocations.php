@@ -3,7 +3,7 @@ include '../connections.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $transferID = mysqli_real_escape_string($conn, $_POST['transferID']);
+    $returnID = mysqli_real_escape_string($conn, $_POST['returnID']);
 
     // Corrected SQL Query
     $sql = "
@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         FROM assets
         INNER JOIN computer ON assets.assets_id = computer.assets_id
         INNER JOIN allocation ON computer.cname_id = allocation.cname_id
-        WHERE allocation.employee_id = '$transferID'
+        WHERE allocation.employee_id = '$returnID'
         AND allocation.status = 1
     ";
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'assets' => $row['assets'],
             'brand' => $row['brand'],
             'model' => $row['model'],
-            'sn' => $row['sn'],
+            'sn' => $row['sn']
         ];
     }
 

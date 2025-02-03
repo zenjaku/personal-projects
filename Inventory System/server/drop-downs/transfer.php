@@ -3,22 +3,18 @@
 $id = $_GET['employee_id'] ?? '';
 $id = mysqli_real_escape_string($conn, $id);
 
-// Query to fetch employee_ids that are NOT associated with unreturned allocations and exclude those with status 2
+// transfer from
 $transferEmployeeIDQuery = "
-    SELECT employee.employee_id
-    FROM employee
-    WHERE EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.employee_id = employee.employee_id
+    SELECT e.employee_id
+    FROM employee e
+    LEFT JOIN allocation a ON e.employee_id = a.employee_id
+    WHERE a.created_at = (
+        SELECT MAX(a2.created_at)
+        FROM allocation a2
+        WHERE a2.employee_id = e.employee_id
     )
-    AND NOT EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.employee_id = employee.employee_id
-        AND allocation.status = 2
-    )
-    ORDER BY employee.employee_id
+    AND a.status = 1
+    ORDER BY e.employee_id
 ";
 
 
@@ -27,23 +23,26 @@ $transferEmployeeIDResult = mysqli_query($conn, $transferEmployeeIDQuery);
 // Fetch employee IDs for transfer
 $transferEmployeeID = mysqli_fetch_all($transferEmployeeIDResult, MYSQLI_ASSOC);
 
-// Query to fetch employee_ids who do not exist in the allocation table OR exist with status = 1
-$transferIDQuery = "
-    SELECT DISTINCT employee.employee_id
-    FROM employee
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.employee_id = employee.employee_id
-    )
-    OR EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.employee_id = employee.employee_id
-        AND allocation.status = 2
-    )
-    ORDER BY employee.employee_id
-";
+// transfer to
+$transferIDQuery = "SELECT e.employee_id
+    FROM employee e
+    WHERE 
+        (
+            (SELECT a.status 
+             FROM allocation a
+             WHERE a.employee_id = e.employee_id
+             ORDER BY a.created_at DESC
+             LIMIT 1) = 0
+        )
+        OR NOT EXISTS (
+            SELECT 1 
+            FROM allocation a
+            WHERE a.employee_id = e.employee_id
+        )
+    ORDER BY e.employee_id
+    ";
+
+
 
 // Execute the query
 $transferIDResult = mysqli_query($conn, $transferIDQuery);
@@ -53,10 +52,14 @@ $transferIDResult = mysqli_query($conn, $transferIDQuery);
 // }
 
 // Fetch employee IDs
-// $transferEmployeeID = mysqli_fetch_all($transferIDResult, MYSQLI_ASSOC);
+$transfer = mysqli_fetch_all($transferIDResult, MYSQLI_ASSOC);
 
-// // Display the results
-// echo "<pre>";
-// print_r($transferEmployeeID);
-// echo "</pre>";
+
+$fetchTransferData = $conn->query("SELECT t_employee_id FROM transferred WHERE status = 1");
+$transferIDs = array_column($fetchTransferData->fetch_all(MYSQLI_ASSOC), 't_employee_id');
+
+$original = null;
+foreach ($transferIDs as $id) {
+    $original = $id;
+}
 ?>

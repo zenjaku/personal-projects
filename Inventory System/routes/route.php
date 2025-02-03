@@ -25,6 +25,9 @@ $routes = [
     '~^/build-pc$~' => 'form/build-form.php',
     '~^/add-to$~' => 'form/add-to-form.php',
     '~^/transfer-assets$~' => 'form/transfer-form.php',
+    '~^/return-assets$~' => 'form/return-form.php',
+
+    
 ];
 
 $request = strtok($_SERVER['REQUEST_URI'], '?'); // Remove query string
@@ -46,8 +49,10 @@ $protected_routes = [
     '/register',
     '/parts',
     '/build',
+    '/add-to',
     '/build-pc',
-    '/transfer-assets'
+    '/transfer-assets',
+    '/return-assets'
 ];
 
 foreach ($routes as $pattern => $file) {

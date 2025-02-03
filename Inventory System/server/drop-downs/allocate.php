@@ -5,22 +5,23 @@ $id = mysqli_real_escape_string($conn, $id);
 
 // Execute the Allocate PC query
 $employeeIDQuery = "
-    SELECT DISTINCT employee.employee_id
-    FROM employee
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.employee_id = employee.employee_id
-    )
-    OR EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.employee_id = employee.employee_id
-        AND (allocation.status = 2 OR allocation.transfer_id IS NOT NULL)
-    )
-    ORDER BY employee.employee_id
+    SELECT e.employee_id
+    FROM employee e
+    WHERE 
+        (
+            (SELECT a.status 
+             FROM allocation a
+             WHERE a.employee_id = e.employee_id
+             ORDER BY a.created_at DESC
+             LIMIT 1) = 0
+        )
+        OR NOT EXISTS (
+            SELECT 1 
+            FROM allocation a
+            WHERE a.employee_id = e.employee_id
+        )
+    ORDER BY e.employee_id
 ";
-
 
 $employeeIDResult = mysqli_query($conn, $employeeIDQuery);
 
@@ -40,7 +41,6 @@ $assetsQuery = "
         SELECT 1
         FROM allocation
         WHERE allocation.cname_id = computer.cname_id
-        AND allocation.return_id IS NULL
     )
     GROUP BY computer.cname
     ORDER BY computer.cname
@@ -63,7 +63,6 @@ $cnameIdQuery = "
         SELECT 1
         FROM allocation
         WHERE allocation.cname_id = computer.cname_id
-        AND allocation.return_id IS NULL
     )
     GROUP BY computer.cname_id
     ORDER BY computer.cname
@@ -84,7 +83,7 @@ while ($row = mysqli_fetch_assoc($computerResult)) {
 // // echo "<pre>";
 // // print_r($availableAssets);
 // // echo "</pre>";
-// echo "<pre>";
+// echo "<pre> AVAILABLE EMPLOYEE_IDS ";
 // print_r($employeeIDs);
 // echo "</pre>";
 ?>

@@ -12,11 +12,11 @@ $name = isset($_POST['name']) ? mysqli_real_escape_string($conn, $_POST['name'])
 $sql = "
     SELECT assets.assets_id, assets.assets, assets.brand, assets.model, assets.sn, 
            computer.cname, computer.cname_id, 
-           IFNULL(allocation.cname_id, '') AS allocated
+           IF(computer.assets_id IS NOT NULL, 'installed', '') AS status
     FROM assets
     LEFT JOIN computer ON assets.assets_id = computer.assets_id
-    LEFT JOIN allocation ON allocation.cname_id = computer.cname_id
     WHERE assets.sn LIKE '$name%'
+    ORDER BY assets
     LIMIT $limit OFFSET $offset
 ";
 $query = mysqli_query($conn, $sql);
@@ -32,7 +32,7 @@ while ($row = mysqli_fetch_assoc($query)) {
         'sn' => $row['sn'],
         'cname_id' => $row['cname_id'] ? $row['cname_id'] : '',
         'cname' => $row['cname'] ? $row['cname'] : 'Available Part',
-        'allocated' => $row['allocated'] ? true : false, // Set allocated flag
+        'status' => $row['status'] ? 'installed' : 'Available', // Change allocated to installed
     ];
 }
 

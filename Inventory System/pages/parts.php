@@ -13,7 +13,7 @@
             <table class="table table-bordered">
                 <thead class="table-dark">
                     <tr>
-                        <th>ASSOCIATED PC</th>
+                        <!-- <th>ASSOCIATED PC</th> -->
                         <th>SPECIFIED</th>
                         <th>BRAND</th>
                         <th>MODEL</th>
@@ -43,20 +43,19 @@
         </div>
     </div>
 </div>
-
 <script>
     $(document).ready(function () {
         var currentPage = 1; // Track the current page globally
 
-        function fetchData(page) {
+        // Function to fetch data based on the search query
+        function fetchData(page, searchQuery = '') {
             currentPage = page; // Update the global currentPage variable
-            var getAssets = $('#getAssets').val().trim(); // Get search query
             $.ajax({
                 method: 'POST',
                 url: 'server/jquery/parts.php',
                 data: {
-                    name: getAssets,  // Include search query
-                    page: page        // Include current page for pagination
+                    name: searchQuery,  // Send search query (empty if no search)
+                    page: page          // Include current page for pagination
                 },
                 success: function (response) {
                     try {
@@ -66,41 +65,36 @@
 
                             data.data.forEach(function (item) {
                                 html += "<tr>";
-                                html += "<td>" + `<a href="/specs?cname=${item.cname}"><span class="badge bg-dark">${item.cname_id}</span></a>` + '&nbsp;&nbsp;&nbsp;<b>' + item.cname + "</b></td>";
                                 html += "<td>" + item.assets + "</td>";
                                 html += "<td>" + item.brand + "</td>";
                                 html += "<td>" + item.model + "</td>";
                                 html += "<td>" + item.sn + "</td>";
 
-                                // Check if asset is allocated, then change the button state and text
-                                let buttonText = item.allocated ? 'Allocated' : 'Install';
-                                let buttonClass = item.allocated ? 'btn btn-secondary' : 'btn btn-dark';
-                                let isDisabled = item.allocated ? 'disabled' : '';  // Disable button if allocated
+                                // Check if asset is installed, then change the button state and text
+                                let buttonText = item.status === 'installed' ? 'Installed' : 'Install';
+                                let buttonClass = item.status === 'installed' ? 'btn btn-secondary' : 'btn btn-dark';
+                                let isDisabled = item.status === 'installed' ? 'disabled' : '';  // Disable button if installed
 
-                                // Disable the <a> tag if allocated
-                                if (item.allocated) {
+                                if (item.status === 'installed') {
                                     html += `<td>
-                                                <a href="/add-to?cname=${item.cname}" style="pointer-events: none; opacity: 0.5;">
-                                                    <button class="${buttonClass}" ${isDisabled}>
-                                                        ${buttonText}
-                                                    </button>
-                                                </a>
-                                            </td>`;
+                                            <a href="/add-to?cname=${item.cname}" style="pointer-events: none; opacity: 0.5;">
+                                                <button class="${buttonClass}" ${isDisabled}>
+                                                    ${buttonText}
+                                                </button>
+                                            </a>
+                                        </td>`;
                                 } else {
                                     html += `<td>
-                                                <a href="/add-to?assets_id=${item.assets_id}">
-                                                    <button class="${buttonClass}" ${isDisabled}>
-                                                        ${buttonText}
-                                                    </button>
-                                                </a>
-                                            </td>`;
+                                            <a href="/add-to?assets_id=${item.assets_id}">
+                                                <button class="${buttonClass}" ${isDisabled}>
+                                                    ${buttonText}
+                                                </button>
+                                            </a>
+                                        </td>`;
                                 }
 
                                 html += "</tr>";
                             });
-
-
-
 
                             $('#showdata').html(html); // Inject data into the table
 
@@ -126,21 +120,28 @@
             });
         }
 
-
-
-        // Initial data fetch when the page loads
-        fetchData(1);
+        // Initial data fetch when the page loads (with empty search query)
+        fetchData(1, '');
 
         // Handle pagination link clicks
         $(document).on('click', '#pagination .page-link', function (e) {
             e.preventDefault();
             var page = $(this).data('page');
-            fetchData(page); // Fetch data for the clicked page
+            var getAssets = $('#getAssets').val().trim();  // Get the current search query
+            fetchData(page, getAssets); // Fetch data for the clicked page, using the current search query
         });
 
         // Search function when typing in the search input
         $('#getAssets').on('keyup', function () {
-            fetchData(1); // Reload data from the first page when the search input changes
+            var searchQuery = $(this).val().trim();
+            if (searchQuery === '') {
+                // If the input is empty, fetch all data
+                fetchData(1, '');
+            } else {
+                // If there's a query, fetch data based on the search
+                fetchData(1, searchQuery);
+            }
         });
     });
+
 </script>
