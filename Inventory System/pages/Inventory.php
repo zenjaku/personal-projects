@@ -24,87 +24,32 @@
             </tr>
         </thead>
         <tbody id="showdata">
-
-            <?php
-            $fetchInventory = mysqli_query($conn, "SELECT * FROM computer  GROUP BY cname ORDER BY created_at");
-
-            if (mysqli_num_rows($fetchInventory) == 0) {
-                // Display message when no data is found
-                echo "<tr><td colspan='6'>No assets found.</td></tr>";
-            } else {
-                while ($result = mysqli_fetch_assoc($fetchInventory)) {
-                    ?>
-                    <tr>
-                        <td>
-                            <p class="my-1"><?= $result['cname_id'] ?></p>
-                        </td>
-                        <td>
-                            <p class="my-1"><?= $result['cname'] ?></p>
-                        </td>
-                        <td>
-                            <a href="/specs?cname=<?= $result['cname'] ?>">
-                                <button type="button" class="btn btn-dark" id="specsBtn">View</button>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="/history?cname_id=<?= $result['cname_id'] ?>">
-                                <button type="button" class="btn btn-warning" id="historyBtn">View</button>
-                            </a>
-                        </td>
-                    </tr>
-                    <?php
-                }
-            }
-            ?>
-
         </tbody>
     </table>
+    <div class="text-white">
+        <nav>
+            <ul class="bg-dark rounded p-2 d-flex justify-content-center align-items-center gap-3 border border-2 border-white"
+                id="pagination">
+                <!-- Pagination links will be inserted dynamically by JavaScript -->
+            </ul>
+        </nav>
+    </div>
     <script>
         $(document).ready(function () {
-            $('#getAssets').on("keyup", function () {
-                var getAssets = $(this).val().trim();
+            var currentPage = 1; // Track the current page globally
 
-                // If input is empty, fetch all assets or clear the table
-                if (getAssets === "") {
-                    // Option 1: Clear the table
-                    $("#showdata").html(""); // Clear the table when input is empty
+            // Function to fetch data with pagination
+            function fetchData(page) {
+                currentPage = page; // Update the global currentPage variable
+                var getAssets = $('#getAssets').val().trim(); // Get search query
 
-                    // Option 2: Fetch all assets (Optional)
-                    $.ajax({
-                        method: 'POST',
-                        url: 'server/jquery/inventory.php', // Make sure this path is correct
-                        data: { name: '' }, // Send empty string to fetch all assets
-                        success: function (response) {
-                            var data = JSON.parse(response);
-
-                            if (data.message) {
-                                $("#showdata").html("<tr><td colspan='4'>No assets found</td></tr>");
-                            } else {
-                                var html = '';
-                                data.forEach(function (item) {
-                                    html += "<tr>";
-                                    html += "<td>" + item.cname_id + "</td>";
-                                    html += "<td>" + item.cname + "</td>";
-                                    html += "<td><a href='/specs?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-dark' id='specsBtn'>View</button></a></td>";
-                                    html += "<td><a href='/history?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-warning' id='historyBtn'>View</button></a></td>";
-                                    html += "</tr>";
-                                });
-                                $("#showdata").html(html); // Inject response into tbody
-                            }
-                        },
-                        error: function () {
-                            $("#showdata").html("<tr><td colspan='4'>An error occurred while fetching data.</td></tr>");
-                        }
-                    });
-
-                    return; // Stop the AJAX call if input is empty
-                }
-
-                // Continue with the original search if input is not empty
                 $.ajax({
                     method: 'POST',
-                    url: 'server/jquery/inventory.php', // Make sure this path is correct
-                    data: { name: getAssets },
+                    url: 'server/jquery/inventory.php', // Ensure this path is correct
+                    data: {
+                        name: getAssets,  // Include search query
+                        page: page        // Include current page for pagination
+                    },
                     success: function (response) {
                         try {
                             var data = JSON.parse(response);
@@ -113,15 +58,23 @@
                                 $("#showdata").html("<tr><td colspan='4'>No assets found</td></tr>");
                             } else {
                                 var html = '';
-                                data.forEach(function (item) {
+                                data.data.forEach(function (item) {
                                     html += "<tr>";
                                     html += "<td>" + item.cname_id + "</td>";
                                     html += "<td>" + item.cname + "</td>";
-                                    html += "<td><a href='/specs?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-dark' id='historyBtn'>View</button></a></td>";
-                                    html += "<td><a href='/history?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-warning' id='historyBtn'>View</button></a></td>";
+                                    html += "<td><a href='/specs?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-dark'>View</button></a></td>";
+                                    html += "<td><a href='/history?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-warning'>View</button></a></td>";
                                     html += "</tr>";
                                 });
                                 $("#showdata").html(html); // Inject response into tbody
+
+                                // Pagination logic
+                                var paginationHtml = '';
+                                for (var i = 1; i <= data.totalPages; i++) {
+                                    var activeClass = (i === currentPage) ? 'active' : '';
+                                    paginationHtml += "<li class='page-item " + activeClass + "'><a class='page-link' href='#' data-page='" + i + "'>" + i + "</a></li>";
+                                }
+                                $('#pagination').html(paginationHtml); // Inject pagination links
                             }
                         } catch (e) {
                             console.error("Error parsing JSON response", e);
@@ -129,14 +82,28 @@
                         }
                     },
                     error: function () {
-                        $("#showdata").html("<tr><td colspan='6'>An error occurred while fetching data.</td></tr>");
+                        $("#showdata").html("<tr><td colspan='4'>An error occurred while fetching data.</td></tr>");
                     }
                 });
+            }
+
+            // Initial data fetch when the page loads
+            fetchData(1);
+
+            // Handle pagination link clicks
+            $(document).on('click', '#pagination .page-link', function (e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                fetchData(page); // Fetch data for the clicked page
+            });
+
+            // Search function when typing in the search input
+            $('#getAssets').on('keyup', function () {
+                fetchData(1); // Reload data from the first page when the search input changes
             });
         });
-
-
     </script>
+
 
 
 
