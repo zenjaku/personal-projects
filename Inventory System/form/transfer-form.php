@@ -1,66 +1,145 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (isset($_POST['transfer'])) {
+
+    if (empty($_POST['employee_id']) || empty($_POST['transfer_employee_id'])) {
+        die("Employee IDs cannot be empty.");
+    }
+
+    // Fetch the data from transferred table
+    $fetchTransferData = $conn->query("SELECT t_employee_id FROM transferred WHERE status = 1");
+    if (!$fetchTransferData) {
+        die("Query Error: " . $conn->error);
+    }
+    $transferIDs = array_column($fetchTransferData->fetch_all(MYSQLI_ASSOC), 't_employee_id');
+
     $originalEmployee = $_POST['employee_id'];
     $transferEmployeeID = $_POST['transfer_employee_id'];
-
     $created_at = date('Y-m-d H:i:s');
+    $updated_at = date('Y-m-d H:i:s');
 
-    $status = 2;
+    $getData = $conn->query("SELECT allocation.cname_id, computer.cname, employee.employee_id 
+                                    FROM allocation 
+                                    LEFT JOIN computer ON allocation.cname_id = computer.cname_id 
+                                    LEFT JOIN employee ON allocation.employee_id = employee.employee_id 
+                                    WHERE allocation.employee_id = '$originalEmployee'");
 
-    // Fixed SQL Query to fetch the data of the original employee
-    $getData = $conn->query("
-        SELECT allocation.cname_id, computer.cname, employee.fname, employee.lname, employee.employee_id 
-        FROM allocation 
-        LEFT JOIN computer ON allocation.cname_id = computer.cname_id 
-        LEFT JOIN employee ON allocation.employee_id = employee.employee_id 
-        WHERE allocation.employee_id = '$originalEmployee'
-    ");
-
-    $data = $getData->fetch_assoc();
-
-    if ($data) {
+    if ($data = $getData->fetch_assoc()) {
         $cname_id = $data["cname_id"];
-        $cname = $data['cname'];
-        $transferName = ($transferEmployeeID == $data['employee_id']) ? ($data["fname"] . ' ' . $data['lname']) : '';
+        $cname = $data["cname"];
+        $status = 1;
 
-        // Insert data into the transferred table
-        $insertTransfer = $conn->prepare("INSERT INTO transferred (employee_id, t_employee_id, cname_id, created_at) VALUES (?, ?, ?, ?)");
-        $insertTransfer->bind_param("ssss", $originalEmployee, $transferEmployeeID, $cname_id, $created_at);
-        $insertTransfer->execute();
+        // Insert into transferred table
+        $insertData = $conn->prepare("INSERT INTO transferred (employee_id, t_employee_id, cname_id, status, created_at) VALUES (?, ?, ?, ?, ?)");
+        if (!$insertData) {
+            die("Prepare Error: " . $conn->error);
+        }
+        $insertData->bind_param("sssis", $originalEmployee, $transferEmployeeID, $cname_id, $status, $created_at);
 
-        if ($insertTransfer->affected_rows > 0) {  // Check if insert was successful
+        if ($insertData->execute()) {
+            // Fetch employee name
+            $getName = $conn->query("SELECT t.t_employee_id, e.fname, e.lname FROM transferred t LEFT JOIN employee e ON e.employee_id = t.t_employee_id WHERE t.t_employee_id = '$transferEmployeeID'");
+            if (!$getName) {
+                die("Query Error: " . $conn->error);
+            }
+            if ($showName = $getName->fetch_assoc()) {
+                $transferName = (!empty($showName["fname"]) && !empty($showName["lname"])) ? ($showName["fname"] . ' ' . $showName["lname"]) : 'Unknown';
+            }
             $_SESSION['status'] = 'success';
             $_SESSION['success'] = $cname . ' is successfully transferred to ' . $transferName;
 
-            // Get the transfer ID for the newly inserted record
-            $getTransferID = $conn->query("SELECT transfer_id, cname_id FROM transferred WHERE t_employee_id = '$transferEmployeeID'");
-            $transfer = $getTransferID->fetch_assoc();
-
-            $transferID = $transfer['transfer_id'];
-            // $transferredCname = $transfer['cname_id'];
-
-            // Update allocation table (for the original employee)
-            $updated_at = date('Y-m-d H:i:s');
-            $updateAllocation = $conn->prepare("UPDATE allocation SET `transfer_id` = ?, `status` = ? ,`updated_at` = ? WHERE employee_id = ?");
-            $updateAllocation->bind_param("iiss", $transferID, $status, $updated_at, $originalEmployee);
-            $updateAllocation->execute();
-
+            // Insert into allocation table
             $allocationStatus = 1;
+            $insertToAllocation = $conn->prepare("INSERT INTO allocation (employee_id, cname_id, status, created_at) VALUES (?, ?, ?, ?)");
+            if (!$insertToAllocation) {
+                die("Prepare Error: " . $conn->error);
+            }
+            $insertToAllocation->bind_param("ssis", $transferEmployeeID, $cname_id, $allocationStatus, $created_at);
 
-            // Insert the new allocation record for the transfer employee
-            $insertToAllocation = $conn->prepare("INSERT INTO allocation (cname_id, employee_id, status, created_at) VALUES (?, ?, ?, ?)");
-            $insertToAllocation->bind_param("ssis", $cname_id, $transferEmployeeID, $allocationStatus, $created_at);
-            $insertToAllocation->execute();
+            if ($insertToAllocation->execute()) {
+                // Get transfer data for computer history
+                $fetchTransfer = $conn->query("SELECT * FROM transferred WHERE t_employee_id = '$transferEmployeeID'");
+                if (!$fetchTransfer) {
+                    die("Query Error: " . $conn->error);
+                }
+                if ($newTransfer = $fetchTransfer->fetch_assoc()) {
+                    $newTransferID = $newTransfer['transfer_id'];
+                    $transferredCnameID = $newTransfer['cname_id'];
+
+                    // Insert into computer history
+                    $insertToHistory = $conn->prepare("INSERT INTO computer_history (transfer_id, employee_id, cname_id, created_at) VALUES (?, ?, ?, ?)");
+                    if (!$insertToHistory) {
+                        die("Prepare Error: " . $conn->error);
+                    }
+                    $insertToHistory->bind_param("isss", $newTransferID, $transferEmployeeID, $transferredCnameID, $created_at);
+                    $insertToHistory->execute();
+                }
+
+                
+                // Get allocation data for computer history
+                $fetchNewID = $conn->query("SELECT * FROM allocation WHERE employee_id = '$transferEmployeeID' AND status = 1");
+                if (!$fetchNewID) {
+                    die("Query Error: " . $conn->error);
+                }
+                if ($getNewId = $fetchNewID->fetch_assoc()) {
+                    $newID = $getNewId['allocation_id'];
+                    $newCnameID = $getNewId['cname_id'];
+
+                    // Insert into computer history
+                    $insertToHistory = $conn->prepare("INSERT INTO computer_history (allocation_id, employee_id, cname_id, created_at) VALUES (?, ?, ?, ?)");
+                    if (!$insertToHistory) {
+                        die("Prepare Error: " . $conn->error);
+                    }
+                    $insertToHistory->bind_param("isss", $newID, $transferEmployeeID, $newCnameID, $created_at);
+                    $insertToHistory->execute();
+                }
+
+
+                // Update the status of existing employee on allocation table
+                $updateExistingStatus = 0;
+                $updateAllocationStatus = $conn->prepare("UPDATE allocation SET `status` = ?, `updated_at` = ? WHERE employee_id = ?");
+                if (!$updateAllocationStatus) {
+                    die("Prepare Error: " . $conn->error);
+                }
+                $updateAllocationStatus->bind_param("iss", $updateExistingStatus, $updated_at, $originalEmployee);
+
+                if ($updateAllocationStatus->execute()) {
+                    $original = null;
+                    foreach ($transferIDs as $id) {
+                        $original = $id;
+                        if ($original == $originalEmployee) {
+                            // Update transferred employee status
+                            $transferredStatus = 0;
+                            $updateTransferredStatus = $conn->prepare("UPDATE transferred SET `status` = ?, `updated_at` = ? WHERE t_employee_id = ?");
+                            if (!$updateTransferredStatus) {
+                                die("Prepare Error: " . $conn->error);
+                            }
+                            $updateTransferredStatus->bind_param("iss", $transferredStatus, $updated_at, $original);
+
+                            if ($updateTransferredStatus->execute()) {
+                                echo "<script> window.location = '/allocate'; </script>";
+                                exit();
+                            } else {
+                                $_SESSION['status'] = 'failed';
+                                $_SESSION['failed'] = 'Cannot transfer ' . $cname . ' to ' . $transferName . '. Please try again later';
+                                echo "<script> window.location = '/allocate'; </script>";
+                                exit();
+                            }
+                        }
+                    }
+                }
+            }
+
+            echo "<script> window.location = '/allocate'; </script>";
+            exit();
         } else {
-            $_SESSION['status'] = 'failed';
-            $_SESSION['failed'] = 'Cannot transfer ' . $cname . ' to ' . $transferName . '. Please try again later';
+            die("Insert Error: " . $insertData->error);
         }
     } else {
-        $_SESSION['status'] = 'failed';
-        $_SESSION['failed'] = 'Employee data not found.';
+        die("Fetch Error: " . $conn->error);
     }
-
-    echo "<script> window.location = '/allocate'; </script>";
-    exit();
 }
+
 ?>

@@ -28,25 +28,28 @@ if (isset($_GET['cname_id']) && !empty($_GET['cname_id'])) {
     // Instead of using a CASE with subqueries (which may return multiple rows),
     // we join the computer table using COALESCE on the three possible cname_id fields.
     // This way we select the computer name directly.
-    $stmt = $conn->prepare("SELECT DISTINCT ch.allocation_id, ch.transfer_id, ch.return_id, c.cname
-                                    FROM computer_history ch
-                                    LEFT JOIN allocation a ON ch.allocation_id = a.allocation_id
-                                    LEFT JOIN transferred t ON ch.transfer_id = t.transfer_id
-                                    LEFT JOIN returned r ON ch.return_id = r.return_id
-                                    JOIN computer c ON c.cname_id = COALESCE(a.cname_id, t.cname_id, r.cname_id)
-                                    WHERE 
-                                        (ch.allocation_id IS NOT NULL AND a.cname_id = ?)
-                                        OR (ch.transfer_id IS NOT NULL AND t.cname_id = ?)
-                                        OR (ch.return_id IS NOT NULL AND r.cname_id = ?)
-                                    ORDER BY
-                                        GREATEST(
-                                            IFNULL(a.created_at, '0000-00-00 00:00:00'),
-                                            IFNULL(t.created_at, '0000-00-00 00:00:00'),
-                                            IFNULL(r.created_at, '0000-00-00 00:00:00')
-                                        ) DESC
-                                    LIMIT ?, ?
-                                ");
-
+    $stmt = $conn->prepare("
+        SELECT DISTINCT 
+            ch.allocation_id, 
+            ch.transfer_id, 
+            ch.return_id,
+            c.cname
+        FROM computer_history ch
+        LEFT JOIN allocation a ON ch.allocation_id = a.allocation_id
+        LEFT JOIN transferred t ON ch.transfer_id = t.transfer_id
+        LEFT JOIN returned r ON ch.return_id = r.return_id
+        JOIN computer c ON c.cname_id = COALESCE(a.cname_id, t.cname_id, r.cname_id)
+        WHERE 
+            (ch.allocation_id IS NOT NULL AND a.cname_id = ?)
+            OR (ch.transfer_id IS NOT NULL AND t.cname_id = ?)
+            OR (ch.return_id IS NOT NULL AND r.cname_id = ?)
+        ORDER BY GREATEST(
+            IFNULL(a.created_at, '0000-00-00 00:00:00'),
+            IFNULL(t.created_at, '0000-00-00 00:00:00'),
+            IFNULL(r.created_at, '0000-00-00 00:00:00')
+        ) DESC
+        LIMIT ?, ?
+    ");
     // Bind parameters: three for cname_id and two integers for offset and limit.
     $stmt->bind_param("sssii", $cname_id, $cname_id, $cname_id, $offset, $limit);
     $stmt->execute();
@@ -82,7 +85,7 @@ if (isset($_GET['cname_id']) && !empty($_GET['cname_id'])) {
                     <?php else: ?>
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <?php
-                            $status = '<span class="badge bg-success">' . "Allocated" . '</span>';
+                            $status = "Allocated";
                             $employeeId = null;
                             $time = null;
                             $badge = '';
@@ -98,17 +101,16 @@ if (isset($_GET['cname_id']) && !empty($_GET['cname_id'])) {
                                     $time = $allocData['created_at'];
                                 }
                             } elseif ($row['transfer_id']) {
-                                $stmtTrans = $conn->prepare("SELECT t.t_employee_id, t.employee_id, t.created_at, e.fname, e.lname FROM transferred t LEFT JOIN employee e ON e.employee_id = t.employee_id WHERE transfer_id = ?");
+                                $stmtTrans = $conn->prepare("SELECT t_employee_id, employee_id, created_at FROM transferred WHERE transfer_id = ?");
                                 $stmtTrans->bind_param("s", $row['transfer_id']);
                                 $stmtTrans->execute();
                                 $transData = $stmtTrans->get_result()->fetch_assoc();
                                 if ($transData) {
-                                    $employeeName = $transData['fname'] . ' ' . $transData['lname'];
                                     $employeeId = $transData['t_employee_id'];
                                     $time = $transData['created_at'];
-                                    $status = '<span class="badge bg-danger ">' . "Transferred from " . htmlspecialchars($employeeName) . '</span>';
+                                    $status = "Transferred";
                                     // Original employee information
-                                    // $badge = '<span class="badge bg-danger ms-2">from ' . htmlspecialchars($transData['employee_id']) . '</span>';
+                                    $badge = '<span class="badge bg-danger ms-2">from ' . htmlspecialchars($transData['employee_id']) . '</span>';
                                 }
                             } elseif ($row['return_id']) {
                                 $stmtReturn = $conn->prepare("SELECT employee_id, created_at FROM returned WHERE return_id = ?");
@@ -118,7 +120,7 @@ if (isset($_GET['cname_id']) && !empty($_GET['cname_id'])) {
                                 if ($returnData) {
                                     $employeeId = $returnData['employee_id'];
                                     $time = $returnData['created_at'];
-                                    $status = '<span class="badge bg-dark">' . "Returned" . '</span>';
+                                    $status = "Returned";
                                 }
                             }
 
@@ -144,7 +146,7 @@ if (isset($_GET['cname_id']) && !empty($_GET['cname_id'])) {
                                     <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?= $status ?>
+                                    <?= htmlspecialchars($status) ?>
                                     <?= $badge ?>
                                 </td>
                                 <td><?= htmlspecialchars($time) ?></td>

@@ -1,22 +1,17 @@
 <?php
 require_once "server/drop-downs/allocate.php";
 require_once "server/drop-downs/transfer.php";
-
-// Store results in arrays to reuse them multiple times
-// $employeeIDs = [];
-// while ($row = mysqli_fetch_assoc($employeeIDResult)) {
-//     $employeeIDs[] = $row;
-// }
+require_once "server/drop-downs/return.php";
 
 $assets = [];
 while ($row = mysqli_fetch_assoc($assetsResult)) {
     $assets[] = $row;
 }
 
-$transfer = [];
-while ($row = mysqli_fetch_assoc($transferIDResult)) {
-    $transfer[] = $row;
-}
+// $transfer = [];
+// while ($row = mysqli_fetch_assoc($transferIDResult)) {
+//     $transfer[] = $row;
+// }
 ?>
 <div class="container py-5">
     <div class="row">
@@ -106,13 +101,13 @@ while ($row = mysqli_fetch_assoc($transferIDResult)) {
                         <div class="d-flex flex-column justify-content-center align-content-center gap-3">
                             <select name="employee_id" id="return_employee_id" class="form-select" required>
                                 <option value="">Employee ID</option>
-                                <?php foreach ($employeeIDs as $row): ?>
+                                <?php foreach ($transferEmployeeID as $row): ?>
                                     <option value="<?= htmlspecialchars($row['employee_id']) ?>">
                                         <?= htmlspecialchars($row['employee_id']) ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
-
+<!-- 
                             <select name="cname_id" id="return_cname_id" class="form-select computer-select" required>
                                 <option value="">Select a Computer</option>
                                 <?php foreach ($assets as $row): ?>
@@ -120,7 +115,7 @@ while ($row = mysqli_fetch_assoc($transferIDResult)) {
                                         <?= htmlspecialchars($row['cname']) ?>
                                     </option>
                                 <?php endforeach; ?>
-                            </select>
+                            </select> -->
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-end gap-3">
@@ -267,20 +262,20 @@ while ($row = mysqli_fetch_assoc($transferIDResult)) {
 
     // script for returning pc
     $(document).ready(function () {
-        $('#allocate_cname_id').on("change", function () {
-            var assetID = $(this).val().trim();
+        $('#return_employee_id').on("change", function () {
+            var returnID = $(this).val().trim();
             var formID = $(this).closest('form').attr('id');
 
-            if (assetID === "") {
+            if (returnID === "") {
                 $("#showdata").html("");
                 return;
             }
 
             $.ajax({
                 method: 'POST',
-                url: 'server/jquery/employee_allocation.php',
+                url: 'server/jquery/return_allocations.php',
                 data: {
-                    assetID: assetID,
+                    returnID: returnID,
                     formType: formID
                 },
                 success: function (response) {
@@ -314,3 +309,21 @@ while ($row = mysqli_fetch_assoc($transferIDResult)) {
         });
     });
 </script>
+
+<?php
+// // Display the results
+// echo "<pre> TEST ";
+// print_r($transferEmployeeID);
+// echo "</pre>";
+
+
+// echo "<pre> FROM ";
+// print_r($transferEmployeeID);
+// echo "</pre>";
+
+// echo "<pre> TO ";
+// print_r($transfer);
+// echo "</pre>";
+
+
+?>

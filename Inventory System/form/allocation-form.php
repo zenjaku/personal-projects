@@ -4,10 +4,9 @@ if (isset($_POST['allocate'])) {
     $employee_id = mysqli_real_escape_string($conn, $_POST['employee_id']);
     $cname_id = htmlspecialchars(trim($_POST['cname_id']));
     // $cname = htmlspecialchars(trim($_POST['cname']));
+    $created_at = date('Y-m-d H:i:s');
 
     $status = 1;
-
-    $created_at = date('Y-m-d H:i:s');
 
     // Check if the allocation record exists
     $checkStatus = mysqli_query($conn, "SELECT * FROM allocation WHERE cname_id = '$cname_id'");
@@ -48,9 +47,19 @@ if (isset($_POST['allocate'])) {
     $stmt->bind_param("ssis", $employee_id, $cname_id, $status, $created_at);
     $result = $stmt->execute();
 
+
+    $getID = $conn->query("SELECT * FROM allocation WHERE employee_id = '$employee_id' ORDER BY created_at");
+    $result = $getID->fetch_assoc();
+
+    $allocationID = $result["allocation_id"];
+
     if ($result) {
         $_SESSION['status'] = 'success';
         $_SESSION['success'] = 'Information saved successfully';
+
+        $history = $conn->prepare("INSERT INTO computer_history (allocation_id, employee_id, cname_id, created_at) VALUES (?, ?, ?, ?)");
+        $history->bind_param("isss", $allocationID, $employee_id, $cname_id, $created_at);
+        $history->execute();
 
         // Redirect after successful insertion
         echo "<script> window.location = '/allocate'; </script>";
