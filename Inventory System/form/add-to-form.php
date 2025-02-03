@@ -11,9 +11,9 @@ if (isset($_GET['assets_id']) && !empty($_GET['assets_id'])) {
     // Fetch all rows into an array
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-    echo "<pre>";
-    print_r($rows);
-    echo "</pre>";
+    // echo "<pre>";
+    // print_r($rows);
+    // echo "</pre>";
 
 }
 ?>

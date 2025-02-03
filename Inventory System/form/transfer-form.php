@@ -17,8 +17,8 @@ if (isset($_POST['transfer'])) {
 
     $originalEmployee = $_POST['employee_id'];
     $transferEmployeeID = $_POST['transfer_employee_id'];
-    $created_at = date('Y-m-d H:i:s');
-    $updated_at = date('Y-m-d H:i:s');
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
+    $updated_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
 
     $getData = $conn->query("SELECT allocation.cname_id, computer.cname, employee.employee_id 
                                     FROM allocation 

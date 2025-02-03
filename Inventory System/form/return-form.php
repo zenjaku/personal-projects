@@ -9,8 +9,9 @@ if (isset($_POST['return'])) {
     }
 
     $employee_id = $_POST['employee_id'];
-    $created_at = date('Y-m-d H:i:s');
-    $updated_at = date('Y-m-d H:i:s');
+    $microtime = microtime(true);
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
+    $updated_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
 
     $getData = $conn->query("SELECT allocation.cname_id, computer.cname, employee.employee_id 
                                     FROM allocation 
@@ -82,7 +83,16 @@ if (isset($_POST['return'])) {
                     // insert to computer_history
                     $insertToHistory = $conn->prepare("INSERT INTO computer_history (employee_id, return_id, cname_id, created_at) VALUES (?, ?, ?, ?)");
                     $insertToHistory->bind_param("siss", $employee_id, $returnID, $cname_id, $created_at);
-                    $insertToHistory->execute();
+                    if ($insertToHistory->execute()) {
+                        $updateComputerStatus = 0;
+                        $updateComputer = $conn->prepare("UPDATE computer SET `status` = ?, `updated_at` = ? WHERE cname_id = ?");
+                        $updateComputer->bind_param("iss", $updateComputerStatus, $updated_at, $cname_id);
+                        if ($updateComputer->execute()) {
+                            // Redirect after successful insertion
+                            echo "<script> window.location = '/allocate'; </script>";
+                            exit();
+                        }
+                    }
                 }
             }
         }

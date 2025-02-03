@@ -6,7 +6,7 @@ if (isset($_POST['addAssets'])) {
     $models = $_POST['model'];  // Array
     $sns = $_POST['sn'];  // Array
 
-    $created_at = date('Y-m-d H:i:s'); // Store current date & time
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3); // Store current date & time
 
     // Prepare the statement for inserting assets
     $store = "INSERT INTO assets (assets_id, assets, brand, model, sn, created_at) VALUES (?, ?, ?, ?, ?, ?)";
