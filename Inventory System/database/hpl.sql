@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2025 at 04:58 PM
+-- Generation Time: Feb 03, 2025 at 10:20 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,23 +29,20 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `allocation` (
   `allocation_id` int(11) NOT NULL,
-  `assets_id` varchar(100) NOT NULL,
+  `cname_id` varchar(100) DEFAULT NULL,
+  `assets_id` varchar(255) DEFAULT NULL,
   `employee_id` varchar(100) NOT NULL,
-  `assets` varchar(255) NOT NULL,
-  `sn` varchar(255) NOT NULL,
-  `t_employee_id` varchar(100) DEFAULT NULL,
   `status` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `allocation`
 --
 
-INSERT INTO `allocation` (`allocation_id`, `assets_id`, `employee_id`, `assets`, `sn`, `t_employee_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'asset_1', '01', 'CPU', '1234567890', '02', 3, '2025-01-28 08:36:05', '2025-01-28 08:39:23'),
-(2, 'asset_1', '02', 'CPU', '1234567890', NULL, 2, '2025-01-28 08:39:23', '2025-01-28 08:52:29');
+INSERT INTO `allocation` (`allocation_id`, `cname_id`, `assets_id`, `employee_id`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'PC2_2025-02-03 15:33:07', NULL, '01', 0, '2025-02-03 09:17:43', '2025-02-03 09:19:25');
 
 -- --------------------------------------------------------
 
@@ -54,91 +51,96 @@ INSERT INTO `allocation` (`allocation_id`, `assets_id`, `employee_id`, `assets`,
 --
 
 CREATE TABLE `assets` (
-  `assets_id` varchar(100) NOT NULL,
-  `assets` varchar(255) NOT NULL,
-  `brand` varchar(255) NOT NULL,
-  `model` varchar(255) NOT NULL,
-  `sn` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `assetstbl_id` int(11) NOT NULL,
+  `assets_id` varchar(255) NOT NULL,
+  `assets` text NOT NULL,
+  `brand` text NOT NULL,
+  `model` text NOT NULL,
+  `sn` text NOT NULL,
+  `created_at` text DEFAULT NULL,
+  `updated_at` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `assets`
 --
 
-INSERT INTO `assets` (`assets_id`, `assets`, `brand`, `model`, `sn`, `created_at`, `updated_at`) VALUES
-('asset_1', 'CPU', 'AMD', 'RYZEN 3', '1234567890', '2025-01-25 14:19:31', '2025-01-25 14:19:31'),
-('asset_2', 'CPU', 'AMD', 'RYZEN 3', '0987654321', '2025-01-25 14:19:31', '2025-01-25 14:21:06'),
-('MOTHERBOARD_33333333333-333', 'MOTHERBOARD', 'GIGABYTE', 'A2560', '33333333333-333', '2025-01-28 09:02:25', '2025-01-28 09:02:25'),
-('RAM_0000000000000000000000', 'RAM', 'KINGSTON', 'HYPERX', '0000000000000000000000', '2025-01-28 01:48:23', '2025-01-28 01:48:23');
+INSERT INTO `assets` (`assetstbl_id`, `assets_id`, `assets`, `brand`, `model`, `sn`, `created_at`, `updated_at`) VALUES
+(1, 'CPU_987-654-321', 'CPU', 'AMD', 'RYZEN 3', '987-654-321', '2025-01-31 03:32:34', NULL),
+(2, 'CPU_0000001223566', 'CPU', 'INTEL', 'I-7', '0000001223566', '2025-01-31 03:32:34', NULL),
+(3, 'MOTHERBOARD_213654688823', 'MOTHERBOARD', 'GIGABYTE', 'A2551', '213654688823', '2025-01-31 06:11:09', NULL),
+(4, 'GPU_TAJ03819SL0', 'GPU', 'NVIDIA', 'GTX 1050 Ti', 'TAJ03819SL0', '2025-02-01 01:05:59', NULL),
+(5, 'RAM_123456789-8', 'RAM', 'KINGSTON', 'HYPERX', '123456789-8', '2025-02-01 01:36:49', NULL),
+(6, 'HDD_7AS54555', 'HDD', 'SEAGATE', '1TB', '7AS54555', '2025-02-01 01:39:12', NULL),
+(7, 'SSD_CF55258-8', 'SSD', 'COLORFUL', '128GB', 'CF55258-8', '2025-02-01 01:39:12', NULL),
+(8, 'MONITOR_10-AS-A5885587', 'MONITOR', 'BENQ', 'A255', '10-AS-A5885587', '2025-02-01 01:39:12', NULL),
+(9, 'KEYBOARD_546515878-ASDASD', 'KEYBOARD', 'A4TECH', 'GENERIC', '546515878-ASDASD', '2025-02-01 01:39:12', NULL),
+(10, 'MOUSE_44654654-ASDSDF', 'MOUSE', 'A4TECH', 'GENERIC', '44654654-ASDSDF', '2025-02-01 01:39:12', NULL),
+(11, 'HEADSET_565ASD54ASD88Q', 'HEADSET', 'REDRAGON', 'X2', '565ASD54ASD88Q', '2025-02-01 01:39:12', NULL),
+(12, 'WEBCAM_54489QW7456', 'WEBCAM', 'DIGIDROID', 'GENERIC', '54489QW7456', '2025-02-01 01:39:12', NULL),
+(13, 'MOTHERBOARD_213654688825', 'MOTHERBOARD', 'GIGABYTE', 'A2555', '213654688825', '2025-02-01 03:26:45', NULL),
+(14, 'HDD_ASDASDII877', 'HDD', 'KINGSTON', '2TB', 'ASDASDII877', '2025-02-01 03:29:36', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `assets_history`
+-- Table structure for table `computer`
 --
 
-CREATE TABLE `assets_history` (
-  `history_id` varchar(100) NOT NULL,
-  `assets_id` varchar(100) NOT NULL,
-  `employee_id` varchar(100) NOT NULL,
-  `assets` varchar(255) NOT NULL,
-  `sn` varchar(255) NOT NULL,
+CREATE TABLE `computer` (
+  `computertbl_id` int(11) NOT NULL,
+  `cname_id` varchar(255) NOT NULL,
+  `cname` varchar(255) NOT NULL,
+  `assets_id` varchar(255) NOT NULL,
   `status` int(11) NOT NULL,
-  `t_employee_id` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `assets_history`
+-- Dumping data for table `computer`
 --
 
-INSERT INTO `assets_history` (`history_id`, `assets_id`, `employee_id`, `assets`, `sn`, `status`, `t_employee_id`, `created_at`, `updated_at`) VALUES
-('history_70662', 'asset_1', '02', 'CPU', '1234567890', 1, NULL, '2025-01-28 08:39:23', '2025-01-28 08:57:09'),
-('history_97194', 'asset_1', '01', 'CPU', '1234567890', 2, '02', '2025-01-28 08:36:05', '2025-01-28 08:57:19');
+INSERT INTO `computer` (`computertbl_id`, `cname_id`, `cname`, `assets_id`, `status`, `created_at`, `updated_at`) VALUES
+(4, 'PC1_2025-02-01 02:34:30', 'PC1', 'CPU_987-654-321', 0, '2025-01-31 18:34:30', NULL),
+(5, 'PC1_2025-02-01 02:34:30', 'PC1', 'MOTHERBOARD_213654688823', 0, '2025-01-31 18:34:30', NULL),
+(6, 'PC1_2025-02-01 02:34:30', 'PC1', 'GPU_TAJ03819SL0', 0, '2025-01-31 18:34:30', NULL),
+(7, 'PC1_2025-02-01 02:34:30', 'PC1', 'RAM_123456789-8', 0, '2025-01-31 18:34:30', NULL),
+(8, 'PC1_2025-02-01 02:34:30', 'PC1', 'HDD_7AS54555', 0, '2025-01-31 18:34:30', NULL),
+(9, 'PC1_2025-02-01 02:34:30', 'PC1', 'SSD_CF55258-8', 0, '2025-01-31 18:34:30', NULL),
+(10, 'PC1_2025-02-01 02:34:30', 'PC1', 'MONITOR_10-AS-A5885587', 0, '2025-01-31 18:34:30', NULL),
+(11, 'PC1_2025-02-01 02:34:30', 'PC1', 'KEYBOARD_546515878-ASDASD', 0, '2025-01-31 18:34:30', NULL),
+(12, 'PC1_2025-02-01 02:34:30', 'PC1', 'MOUSE_44654654-ASDSDF', 0, '2025-01-31 18:34:30', NULL),
+(13, 'PC1_2025-02-01 02:34:30', 'PC1', 'HEADSET_565ASD54ASD88Q', 0, '2025-01-31 18:34:30', NULL),
+(14, 'PC1_2025-02-01 02:34:30', 'PC1', 'WEBCAM_54489QW7456', 0, '2025-01-31 18:34:30', NULL),
+(16, 'PC3_2025-02-01 03:43:02', 'PC3', 'MOTHERBOARD_213654688825', 0, '2025-01-31 19:43:02', NULL),
+(17, 'PC3_2025-02-01 03:43:02', 'PC3', 'HDD_ASDASDII877', 0, '2025-01-31 19:43:02', NULL),
+(18, 'PC2_2025-02-03 15:33:07', 'PC2', 'CPU_0000001223566', 0, '2025-02-03 07:33:07', '2025-02-03 09:19:25');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `data_table`
+-- Table structure for table `computer_history`
 --
 
-CREATE TABLE `data_table` (
-  `id` int(11) NOT NULL,
-  `fname` varchar(255) NOT NULL,
-  `lname` varchar(255) NOT NULL,
-  `age` varchar(100) NOT NULL,
-  `dob` date NOT NULL,
-  `sex` varchar(100) NOT NULL,
-  `contact` varchar(255) NOT NULL,
-  `street` varchar(255) NOT NULL,
-  `brgy` varchar(255) NOT NULL,
-  `city` varchar(255) NOT NULL,
-  `province` varchar(255) NOT NULL,
-  `region` varchar(255) NOT NULL,
-  `zip` varchar(100) NOT NULL,
-  `status` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+CREATE TABLE `computer_history` (
+  `history_id` int(11) NOT NULL,
+  `employee_id` varchar(255) NOT NULL,
+  `allocation_id` int(11) DEFAULT NULL,
+  `transfer_id` int(11) DEFAULT NULL,
+  `return_id` int(11) DEFAULT NULL,
+  `cname_id` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Dumping data for table `data_table`
+-- Dumping data for table `computer_history`
 --
 
-INSERT INTO `data_table` (`id`, `fname`, `lname`, `age`, `dob`, `sex`, `contact`, `street`, `brgy`, `city`, `province`, `region`, `zip`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Harry', 'Potter', '32', '1990-04-12', 'male', '0956233336666', '123', 'Dolores', 'SAN FERNANDO', 'PAMPANGA', 'REGION III - CENTRAL LUZON', '2000', 1, '2025-01-21 13:49:01', '2025-01-21 13:52:52'),
-(2, 'Hermione', 'Granger', '27', '1997-02-14', 'female', '09123456789', '456', 'Malis', 'GUIGUINTO', 'BULACAN', 'REGION III - CENTRAL LUZON', '3015', 3, '2025-01-21 13:51:56', '2025-01-21 13:52:51'),
-(3, 'Ron', 'Weasley', '26', '1998-04-25', 'male', '55555555555', '123', 'Matungao', 'BULACAN', 'BULACAN', 'REGION III - CENTRAL LUZON', '3017', 3, '2025-01-21 14:26:06', '2025-01-25 06:35:44'),
-(4, 'Rebeus', 'Hagrid', '62', '1960-05-25', 'male', '09565656232', '123', 'Tandang Sora', 'QUEZON CITY', 'NCR, FIRST DISTRICT', 'NATIONAL CAPITAL REGION', '1116', 2, '2025-01-21 14:28:00', '2025-01-25 06:35:48'),
-(9, 'Darco', 'Malfoy', '24', '1999-02-14', 'Male', '09123456789', '123', 'Maple', 'CURRIMAO', 'NEGROS OCCIDENTAL', 'REGION VI - WESTERN VISAYAS', '22222', 2, '2025-01-22 04:35:46', '2025-01-22 04:35:46'),
-(10, 'Gregory', 'Goyle', '24', '1999-02-14', 'Male', '09562456985', '123', 'Maple', 'CURRIMAO', 'NEGROS OCCIDENTAL', 'REGION VI - WESTERN VISAYAS', '22222', 2, '2025-01-22 04:35:46', '2025-01-22 04:36:48'),
-(11, 'Cedric', 'Diggory', '25', '2000-05-25', 'Male', '09568742236', '456', 'Winter', 'BANGUI', 'CAMIGUIN', 'REGION X - NORTHERN MINDANAO', '55555', 2, '2025-01-22 04:39:44', '2025-01-25 06:35:52'),
-(12, 'Dudley', 'Dursley', '54', '1980-07-25', 'Male', '09745236588', '789', 'Huffle', 'CURRIMAO', 'CAMARINES NORTE', 'REGION V - BICOL REGION', '2000', 2, '2025-01-22 04:41:57', '2025-01-22 04:41:57'),
-(13, 'Sirius', 'Black', '70', '1952-11-27', 'Male', '09562354569', '789', 'Wolf', 'DINGRAS', 'ILOCOS NORTE', 'REGION I - ILOCOS REGION', '5555', 1, '2025-01-22 04:43:26', '2025-01-22 04:43:26'),
-(14, 'Luna ', 'Lovegood', '28', '1997-02-14', 'Female', '09142536789', '1414', 'Love', 'CITY OF BATAC', 'BULACAN', 'REGION III - CENTRAL LUZON', '2222', 3, '2025-01-22 04:44:29', '2025-01-22 04:44:29');
+INSERT INTO `computer_history` (`history_id`, `employee_id`, `allocation_id`, `transfer_id`, `return_id`, `cname_id`, `created_at`, `updated_at`) VALUES
+(1, '01', 1, NULL, NULL, 'PC2_2025-02-03 15:33:07', '2025-02-03 09:17:43', NULL),
+(2, '01', NULL, NULL, 1, 'PC2_2025-02-03 15:33:07', '2025-02-03 09:19:25', NULL);
 
 -- --------------------------------------------------------
 
@@ -150,25 +152,47 @@ CREATE TABLE `employee` (
   `employee_id` varchar(100) NOT NULL,
   `fname` varchar(255) NOT NULL,
   `lname` varchar(255) NOT NULL,
-  `contact` varchar(255) NOT NULL,
+  `contact` varchar(15) NOT NULL,
   `street` varchar(255) NOT NULL,
   `brgy` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
   `province` varchar(255) NOT NULL,
   `region` varchar(255) NOT NULL,
-  `zip` varchar(100) NOT NULL,
+  `zip` varchar(10) NOT NULL,
   `status` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `employee`
 --
 
 INSERT INTO `employee` (`employee_id`, `fname`, `lname`, `contact`, `street`, `brgy`, `city`, `province`, `region`, `zip`, `status`, `created_at`, `updated_at`) VALUES
-('01', 'Ren', 'Ren', '99999999999', '999', '999', 'PIDDIG', 'LA UNION', 'REGION I - ILOCOS REGION', '99', 2, '2025-01-28 01:56:17', '2025-01-28 01:56:17'),
-('02', 'Zo', 'Zo', '09899999999', '123', '123', 'PAOAY', 'PAMPANGA', 'REGION III - CENTRAL LUZON', '1234', 1, '2025-01-28 01:49:12', '2025-01-28 01:49:12');
+('01', 'Zo', 'Ren', '09572222222', '123', '123', 'PINILI', 'ILOCOS NORTE', 'REGION I - ILOCOS REGION', '1234', 1, '2025-02-03 03:41:44', NULL),
+('02', 'Ro', 'Se', '09175656565', '456', '456', 'ADAMS', 'BATANES', 'REGION II - CAGAYAN VALLEY', '4567', 1, '2025-02-03 03:42:01', NULL),
+('03', 'Tom', 'My', '09185222222', '789', '789', 'CITY OF MANILA', 'NCR, FIRST DISTRICT', 'NATIONAL CAPITAL REGION', '7890', 1, '2025-02-03 03:42:28', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `returned`
+--
+
+CREATE TABLE `returned` (
+  `return_id` int(11) NOT NULL,
+  `assets_id` varchar(255) DEFAULT NULL,
+  `cname_id` varchar(255) DEFAULT NULL,
+  `employee_id` varchar(100) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `returned`
+--
+
+INSERT INTO `returned` (`return_id`, `assets_id`, `cname_id`, `employee_id`, `created_at`) VALUES
+(1, NULL, 'PC2_2025-02-03 15:33:07', '01', '2025-02-03 09:19:25');
 
 -- --------------------------------------------------------
 
@@ -1970,6 +1994,40 @@ INSERT INTO `tblregion` (`region_c`, `region_m`, `abbreviation`, `region_sort`) 
 ('17', 'MIMAROPA', 'MIMAROPA1', 6),
 ('18', '-', '-', 18);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transferred`
+--
+
+CREATE TABLE `transferred` (
+  `transfer_id` int(11) NOT NULL,
+  `employee_id` varchar(100) NOT NULL,
+  `t_employee_id` varchar(100) NOT NULL,
+  `cname_id` varchar(255) DEFAULT NULL,
+  `assets_id` varchar(255) DEFAULT NULL,
+  `status` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `usertbl_id` int(11) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `fname` varchar(255) NOT NULL,
+  `lname` varchar(255) NOT NULL,
+  `contact` varchar(150) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -1984,27 +2042,31 @@ ALTER TABLE `allocation`
 -- Indexes for table `assets`
 --
 ALTER TABLE `assets`
-  ADD PRIMARY KEY (`assets_id`);
+  ADD PRIMARY KEY (`assetstbl_id`);
 
 --
--- Indexes for table `assets_history`
+-- Indexes for table `computer`
 --
-ALTER TABLE `assets_history`
-  ADD PRIMARY KEY (`history_id`),
-  ADD KEY `assets_id` (`assets_id`),
-  ADD KEY `employee_id` (`employee_id`);
+ALTER TABLE `computer`
+  ADD PRIMARY KEY (`computertbl_id`);
 
 --
--- Indexes for table `data_table`
+-- Indexes for table `computer_history`
 --
-ALTER TABLE `data_table`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `computer_history`
+  ADD PRIMARY KEY (`history_id`);
 
 --
 -- Indexes for table `employee`
 --
 ALTER TABLE `employee`
   ADD PRIMARY KEY (`employee_id`);
+
+--
+-- Indexes for table `returned`
+--
+ALTER TABLE `returned`
+  ADD PRIMARY KEY (`return_id`);
 
 --
 -- Indexes for table `tblprovince`
@@ -2019,6 +2081,18 @@ ALTER TABLE `tblregion`
   ADD PRIMARY KEY (`region_c`);
 
 --
+-- Indexes for table `transferred`
+--
+ALTER TABLE `transferred`
+  ADD PRIMARY KEY (`transfer_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`usertbl_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -2026,24 +2100,43 @@ ALTER TABLE `tblregion`
 -- AUTO_INCREMENT for table `allocation`
 --
 ALTER TABLE `allocation`
-  MODIFY `allocation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `allocation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `data_table`
+-- AUTO_INCREMENT for table `assets`
 --
-ALTER TABLE `data_table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+ALTER TABLE `assets`
+  MODIFY `assetstbl_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT for table `computer`
 --
+ALTER TABLE `computer`
+  MODIFY `computertbl_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- Constraints for table `assets_history`
+-- AUTO_INCREMENT for table `computer_history`
 --
-ALTER TABLE `assets_history`
-  ADD CONSTRAINT `assets_history_ibfk_1` FOREIGN KEY (`assets_id`) REFERENCES `assets` (`assets_id`),
-  ADD CONSTRAINT `assets_history_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`);
+ALTER TABLE `computer_history`
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `returned`
+--
+ALTER TABLE `returned`
+  MODIFY `return_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `transferred`
+--
+ALTER TABLE `transferred`
+  MODIFY `transfer_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `usertbl_id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

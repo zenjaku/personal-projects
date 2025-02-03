@@ -3,7 +3,7 @@ if (isset($_POST['build-pc'])) {
     $cname = $_POST['cname'];  // Single value (not an array)
     $assets_id = $_POST['assets_id'];  // Array of asset IDs
 
-    $created_at = date('Y-m-d H:i:s');
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
 
     $cname_id = $cname . '_' . $created_at;
 

@@ -10,7 +10,7 @@ if (in_array($_SERVER['SERVER_NAME'], ['localhost', '127.0.0.1'])) {
     // Production configuration
     $servername = "sql300.infinityfree.com";
     $username   = "if0_38196116";
-    $password   = "12345";
+    $password   = "hplgamedesign";
     $dbname     = "if0_38196116_hpl";
 }
 

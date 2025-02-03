@@ -4,7 +4,8 @@ if (isset($_POST['allocate'])) {
     $employee_id = mysqli_real_escape_string($conn, $_POST['employee_id']);
     $cname_id = htmlspecialchars(trim($_POST['cname_id']));
     // $cname = htmlspecialchars(trim($_POST['cname']));
-    $created_at = date('Y-m-d H:i:s');
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
+    $updated_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
 
     $status = 1;
 
@@ -48,7 +49,7 @@ if (isset($_POST['allocate'])) {
     $result = $stmt->execute();
 
 
-    $getID = $conn->query("SELECT * FROM allocation WHERE employee_id = '$employee_id' ORDER BY created_at");
+    $getID = $conn->query("SELECT * FROM allocation WHERE employee_id = '$employee_id' AND status = 1");
     $result = $getID->fetch_assoc();
 
     $allocationID = $result["allocation_id"];
@@ -59,11 +60,19 @@ if (isset($_POST['allocate'])) {
 
         $history = $conn->prepare("INSERT INTO computer_history (allocation_id, employee_id, cname_id, created_at) VALUES (?, ?, ?, ?)");
         $history->bind_param("isss", $allocationID, $employee_id, $cname_id, $created_at);
-        $history->execute();
+        if ($history->execute()) {
 
-        // Redirect after successful insertion
-        echo "<script> window.location = '/allocate'; </script>";
-        exit();
+            $updateComputer = $conn->prepare("UPDATE computer SET `status` = ?, `updated_at` = ? WHERE cname_id = ?");
+            $updateComputer->bind_param("iss", $status, $updated_at, $cname_id);
+            if ($updateComputer->execute()) {
+                // Redirect after successful insertion
+                echo "<script> window.location = '/allocate'; </script>";
+                exit();
+            }
+
+
+        }
+
     } else {
         $_SESSION['status'] = 'failed';
         $_SESSION['failed'] = 'Failed to save information. Please try again.';

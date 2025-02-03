@@ -34,17 +34,11 @@ $asset_name = $_GET['cname_id'] ?? '';
 $assetName = mysqli_real_escape_string($conn, $asset_name);
 
 // Query to fetch distinct asset names (cname) that are NOT associated with unreturned allocations
-$assetsQuery = "
-    SELECT computer.cname, computer.cname_id, computer.assets_id
-    FROM computer
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM allocation
-        WHERE allocation.cname_id = computer.cname_id
-    )
-    GROUP BY computer.cname
-    ORDER BY computer.cname
-";
+$assetsQuery = "SELECT status, cname, cname_id FROM computer
+                WHERE status = 0
+                GROUP BY cname
+                ORDER BY cname
+                ";
 
 // Execute the query to fetch assets not associated with unreturned allocations
 $assetsResult = mysqli_query($conn, $assetsQuery);
@@ -80,9 +74,9 @@ while ($row = mysqli_fetch_assoc($computerResult)) {
 
 
 // // // Output the results (for debugging or display)
-// // echo "<pre>";
-// // print_r($availableAssets);
-// // echo "</pre>";
+// echo "<pre>";
+// print_r($assetsSearch);
+// echo "</pre>";
 // echo "<pre> AVAILABLE EMPLOYEE_IDS ";
 // print_r($employeeIDs);
 // echo "</pre>";
