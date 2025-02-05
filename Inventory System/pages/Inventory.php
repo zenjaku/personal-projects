@@ -125,7 +125,7 @@
                     $offset = ($pagination - 1) * $limit;
 
                     // Query to get the total number of records (counting all assets)
-                    $totalResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM assets");
+                    $totalResult = mysqli_query($conn, "SELECT COUNT(DISTINCT assets_id) as total FROM assets");
                     if (!$totalResult) {
                         die("Error fetching total rows: " . mysqli_error($conn));
                     }
@@ -138,17 +138,11 @@
                         $pagination = $totalPages > 0 ? $totalPages : 1;
                     }
 
-                    // Query to count occurrences of each asset and compare with computer table (cname_id)
-                    $assetQuery = "
-                        SELECT 
-                            a.assets, 
-                            COUNT(a.assets_id) AS total_assets, 
-                            COUNT(c.assets_id) AS allocated_assets, 
-                            (COUNT(a.assets_id) - COUNT(c.assets_id)) AS in_stock
-                        FROM assets a 
-                        LEFT JOIN computer c ON a.assets_id = c.assets_id AND c.cname_id IS NOT NULL
-                        GROUP BY a.assets
-                        LIMIT $limit OFFSET $offset
+                    // Query to fetch and group assets by their name, and count the occurrences of each asset
+                    $assetQuery = "SELECT a.assets, a.assets_id, COUNT(a.assets_id) AS total_assets
+                       FROM assets a
+                       GROUP BY a.assets
+                       LIMIT $limit OFFSET $offset
                     ";
 
                     $result = mysqli_query($conn, $assetQuery);
@@ -156,22 +150,53 @@
                         die("Error fetching assets: " . mysqli_error($conn));
                     }
 
-                    // Generate table rows
+                    // Fetch and unserialize assets_ids from computer table
+                    $computerQuery = "SELECT assets_id FROM computer WHERE cname_id IS NOT NULL";
+                    $computerResult = mysqli_query($conn, $computerQuery);
+                    if (!$computerResult) {
+                        die("Error fetching computer data: " . mysqli_error($conn));
+                    }
+
+                    $allocatedAssets = [];
+                    while ($row = mysqli_fetch_assoc($computerResult)) {
+                        // Unserialize the assets_id if it's stored serialized
+                        $assetsIdArray = unserialize($row['assets_id']);
+                        $allocatedAssets = array_merge($allocatedAssets, $assetsIdArray); // Merge into the allocated array
+                    }
+
+                    // Generate table rows for assets
                     while ($row = mysqli_fetch_assoc($result)) {
                         $assetName = $row['assets'];
-                        $totalAssets = $row['total_assets'];
-                        $allocatedAssets = $row['allocated_assets'];
-                        $stock = $row['in_stock']; // Subtract allocated assets from total and check for available stock
+                        $assetId = $row['assets_id'];
+                        $totalAssetsCount = $row['total_assets']; // Count of assets for each asset type
+                    
+                        // Count the number of allocated assets for the current asset
+                        $allocatedCount = 0;
+                        foreach ($allocatedAssets as $allocatedAssetId) {
+                            // Extract just the asset type (e.g., "CPU" from "CPU_987-654-321")
+                            $allocatedAssetType = explode('_', $allocatedAssetId)[0];
+                            $currentAssetType = explode('_', $assetId)[0];
+
+                            if ($allocatedAssetType == $currentAssetType) {
+                                $allocatedCount++;
+                            }
+                        }
+
+                        // Calculate in_stock (total - allocated)
+                        $inStock = $totalAssetsCount - $allocatedCount;
+
+                        // Output the row for this asset
                         ?>
                         <tr>
                             <td><?= htmlspecialchars($assetName, ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars($totalAssets, ENT_QUOTES, 'UTF-8') ?></td>
-                            <td><?= htmlspecialchars($stock, ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($totalAssetsCount, ENT_QUOTES, 'UTF-8') ?></td>
+                            <!-- Display the count of the asset -->
+                            <td><?= htmlspecialchars($inStock, ENT_QUOTES, 'UTF-8') ?></td> <!-- Available parts -->
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
-
+            
             <!-- Pagination Links -->
             <div class="text-white">
                 <nav>

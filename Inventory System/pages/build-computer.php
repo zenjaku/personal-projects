@@ -1,8 +1,8 @@
 <?php
 require('server/drop-downs/parts.php');
 ?>
-<div class="row">
-    <div class="col-6 py-5">
+<div class="row d-flex flex-column justify-content-center align-items-center">
+    <div class="col-12 py-5">
         <div class="card">
             <div class="card-header">
                 <h3>Build PC</h3>
@@ -30,7 +30,7 @@ require('server/drop-downs/parts.php');
                                     $(document).ready(function () {
                                         var currentPage = 1;
                                         var addedAssets = []; // Track added asset IDs
-                                        var singleAddParts = ['CPU', 'Motherboard', 'GPU', 'Power Supply']; // Parts that can only be added once
+                                        var singleAddParts = ['CPU', 'MOTHERBOARD', 'GPU', 'POWER SUPPLY']; // Parts that can only be added once
 
                                         // Function to fetch data based on search term
                                         function fetchData(page) {
@@ -53,22 +53,37 @@ require('server/drop-downs/parts.php');
                                                         if (data.data.length > 0) {
                                                             data.data.forEach(function (item) {
                                                                 html += `<tr>
-                                                                            <td>${item.assets_id}</td>
-                                                                            <td>${item.assets}</td>
-                                                                            <td>${item.brand}</td>
-                                                                            <td>${item.model}</td>
-                                                                            <td>${item.sn}</td>
-                                                                            <td>
-                                                                                <button type="button" class="btn btn-warning mb-3 add-part" data-assets-id="${item.assets_id}" data-assets="${item.assets}">
-                                                                                    <i class="fa-solid fa-circle-plus"></i>
-                                                                                </button>
-                                                                            </td>
-                                                                        </tr>`;
+                                        <td>${item.assets_id}</td>
+                                        <td>${item.assets}</td>
+                                        <td>${item.brand}</td>
+                                        <td>${item.model}</td>
+                                        <td>${item.sn}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-warning mb-3 add-part" data-assets-id="${item.assets_id}" data-assets="${item.assets}">
+                                                <i class="fa-solid fa-circle-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>`;
                                                             });
                                                         } else {
                                                             html = '<tr><td colspan="6">No parts found</td></tr>';
                                                         }
                                                         $('#showdata').html(html);
+
+                                                        // Pagination logic
+                                                        var paginationHtml = '';
+                                                        for (var i = 1; i <= data.totalPages; i++) {
+                                                            var activeClass = (i === currentPage) ? 'active' : '';
+                                                            paginationHtml += `<li class='page-item ${activeClass}'><a class='page-link' href='#' data-page='${i}'>${i}</a></li>`;
+                                                        }
+                                                        $('#pagination').html(paginationHtml); // Inject pagination links
+
+                                                        // Attach click event handlers to pagination links
+                                                        $('#pagination .page-link').on('click', function (e) {
+                                                            e.preventDefault(); // Prevent default link behavior
+                                                            var page = $(this).data('page'); // Get the page number
+                                                            fetchData(page); // Fetch data for the selected page
+                                                        });
                                                     } catch (e) {
                                                         console.error("Error parsing response:", e);
                                                     }
@@ -86,7 +101,7 @@ require('server/drop-downs/parts.php');
                                         $(document).on('click', '.add-part', function () {
                                             var row = $(this).closest('tr');
                                             var assets_id = $(this).data('assets-id');
-                                            var assets = $(this).data('assets');
+                                            var assets = $(this).data('assets').trim().toUpperCase(); // Trim and convert to uppercase
                                             var brand = row.find('td:eq(2)').text();
                                             var model = row.find('td:eq(3)').text();
                                             var sn = row.find('td:eq(4)').text();
@@ -98,7 +113,15 @@ require('server/drop-downs/parts.php');
 
                                             // Check if the part is in singleAddParts and already added
                                             if (singleAddParts.includes(assets)) {
-                                                var alreadyAdded = $('#showassets').find(`input[name="assets[]"][value="${assets}"]`).length > 0;
+                                                var alreadyAdded = false;
+                                                $('#showassets input[name="assets[]"]').each(function () {
+                                                    var existingAsset = $(this).val().trim().toUpperCase(); // Trim and convert to uppercase
+                                                    if (existingAsset === assets) {
+                                                        alreadyAdded = true;
+                                                        return false; // Break the loop
+                                                    }
+                                                });
+
                                                 if (alreadyAdded) {
                                                     showToast(`Only one ${assets} can be added.`, 'error');
                                                     return;
@@ -108,13 +131,13 @@ require('server/drop-downs/parts.php');
                                             // Add the part to the list
                                             addedAssets.push(assets_id);
                                             $('#showassets').append(`<tr>
-                                                                        <td><input type="text" class="border-0" readonly name="assets_id[]" value="${assets_id}"></td>
-                                                                        <td><input type="text" class="border-0" readonly name="assets[]" value="${assets}"></td>
-                                                                        <td><input type="text" class="border-0" readonly name="brand[]" value="${brand}"></td>
-                                                                        <td><input type="text" class="border-0" readonly name="model[]" value="${model}"></td>
-                                                                        <td><input type="text" class="border-0" readonly name="sn[]" value="${sn}"></td>
-                                                                        <td><button type="button" class="btn btn-danger mb-3 remove-part"><i class="fa-solid fa-trash-can"></i></button></td>
-                                                                    </tr>`);
+                                    <td><input type="text" class="border-0" readonly name="assets_id[]" value="${assets_id}"></td>
+                                    <td><input type="text" class="border-0" readonly name="assets[]" value="${assets}"></td>
+                                    <td><input type="text" class="border-0" readonly name="brand[]" value="${brand}"></td>
+                                    <td><input type="text" class="border-0" readonly name="model[]" value="${model}"></td>
+                                    <td><input type="text" class="border-0" readonly name="sn[]" value="${sn}"></td>
+                                    <td><button type="button" class="btn btn-danger mb-3 remove-part"><i class="fa-solid fa-trash-can"></i></button></td>
+                                </tr>`);
 
                                             showToast(`${assets} added successfully.`, 'success');
                                         });
@@ -145,11 +168,11 @@ require('server/drop-downs/parts.php');
                                             toast.className = `toast show bg-${bgColor} ${textColor}`;
                                             toast.setAttribute('role', 'alert');
                                             toast.innerHTML = `
-                                                                <div class="toast-body justify-content-between d-flex">
-                                                                    ${message}
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-                                                                </div>
-                                                            `;
+                            <div class="toast-body justify-content-between d-flex">
+                                ${message}
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                            </div>
+                        `;
                                             let toastContainer = document.querySelector('.toast-container');
                                             if (!toastContainer) {
                                                 toastContainer = document.createElement('div');
@@ -175,7 +198,7 @@ require('server/drop-downs/parts.php');
             </form>
         </div>
     </div>
-    <div class="col-5 py-5">
+    <div class="col">
         <div class="">
             <table class="table table-bordered text-center table-responsive">
                 <div id="searchAssets" class="form-outline">
@@ -206,20 +229,20 @@ require('server/drop-downs/parts.php');
                         </td>
                     </tr>
                 </tbody>
-                <!-- <tfoot>
+                <tfoot>
                     <tr>
                         <td colspan="6">
                             <div class="text-white">
                                 <nav>
                                     <ul class="bg-dark rounded p-2 d-flex justify-content-center align-items-center gap-3 border border-2 border-white"
                                         id="pagination">
-                                        Pagination links will be inserted dynamically by JavaScript
+                                        <!-- Pagination links will be inserted dynamically by JavaScript -->
                                     </ul>
                                 </nav>
                             </div>
                         </td>
                     </tr>
-                </tfoot> -->
+                </tfoot>
             </table>
 
         </div>

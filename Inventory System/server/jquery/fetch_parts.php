@@ -32,6 +32,11 @@ $exclude = array_merge($exclude, $addedParts);
 // Ensure IDs are properly quoted for SQL
 $excludeIds = !empty($exclude) ? "'" . implode("','", array_map('mysqli_real_escape_string', array_fill(0, count($exclude), $conn), $exclude)) . "'" : null;
 
+// Pagination variables
+$limit = 10;  // Number of items per page
+$page = isset($_POST['page']) ? (int)$_POST['page'] : 1;  // Current page (default is 1)
+$offset = ($page - 1) * $limit;  // Calculate the offset
+
 // Start query
 $sql = "SELECT * FROM assets";
 $conditions = [];
@@ -49,7 +54,14 @@ if (!empty($conditions)) {
     $sql .= " WHERE " . implode(" AND ", $conditions);
 }
 
-$sql .= " ORDER BY assets_id ASC";
+// Get total count of assets for pagination
+$totalCountQuery = "SELECT COUNT(*) AS total FROM assets";
+$totalCountResult = mysqli_query($conn, $totalCountQuery);
+$totalRows = mysqli_fetch_assoc($totalCountResult)['total'];
+$totalPages = ceil($totalRows / $limit);  // Total number of pages
+
+// Apply limit and offset to get paginated results
+$sql .= " ORDER BY assets_id ASC LIMIT $limit OFFSET $offset";
 
 // Execute query
 $result = mysqli_query($conn, $sql);
@@ -59,8 +71,11 @@ while ($row = mysqli_fetch_assoc($result)) {
     $data[] = $row;
 }
 
-// Return JSON response
-echo json_encode(['data' => $data]);
+// Return paginated results along with total pages
+echo json_encode([
+    'data' => $data,
+    'totalPages' => $totalPages
+]);
 
 // Debugging output
 // print_r($data);
