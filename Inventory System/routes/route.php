@@ -4,6 +4,8 @@ $routes = [
     '~^/$~' => 'pages/home.php',
     '~^/login$~' => 'admin/login.php',
     '~^/admin-register$~' => 'admin/admin-register.php',
+    '~^/inventory-custody$~' => 'pages/inventory-custody.php',
+    '~^/esignature$~' => 'form/signature-form.php',
 
     // Protected pages (require login)
     '~^/inventory$~' => 'pages/inventory.php',
@@ -19,6 +21,7 @@ $routes = [
     '~^/build$~' => 'pages/build-computer.php',
     '~^/remove-parts$~' => 'server/remove-parts.php',
     '~^/add-to$~' => 'pages/add-to.php',
+    // '~^/inventory-custody$~' => 'pages/inventory-custody.php',
 
     // Form submissions (should be protected)
     '~^/add-assets$~' => 'form/inventory-form.php',

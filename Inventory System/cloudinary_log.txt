@@ -1,0 +1,198 @@
+Cloudinary\Api\ApiResponse Object
+(
+    [rateLimitResetAt] => 
+    [rateLimitAllowed] => 0
+    [rateLimitRemaining] => 0
+    [headers] => Array
+        (
+            [Date] => Array
+                (
+                    [0] => Wed, 05 Feb 2025 23:26:51 GMT
+                )
+
+            [Content-Type] => Array
+                (
+                    [0] => application/json; charset=utf-8
+                )
+
+            [Transfer-Encoding] => Array
+                (
+                    [0] => chunked
+                )
+
+            [Connection] => Array
+                (
+                    [0] => keep-alive
+                )
+
+            [Vary] => Array
+                (
+                    [0] => Accept-Encoding
+                )
+
+            [Status] => Array
+                (
+                    [0] => 200 OK
+                )
+
+            [Cache-Control] => Array
+                (
+                    [0] => max-age=0, private, must-revalidate
+                )
+
+            [X-XSS-Protection] => Array
+                (
+                    [0] => 1; mode=block
+                )
+
+            [X-Request-Id] => Array
+                (
+                    [0] => 357f3fc381829a1d74be0a0c26fe6b3f
+                )
+
+            [X-UA-Compatible] => Array
+                (
+                    [0] => IE=Edge,chrome=1
+                )
+
+            [ETag] => Array
+                (
+                    [0] => "2948f48fb5d717db43f9780e057b985e"
+                )
+
+            [Server] => Array
+                (
+                    [0] => cloudinary
+                )
+
+        )
+
+    [storage:ArrayObject:private] => Array
+        (
+            [asset_id] => b96c8728f8997292c1a5516bebc9b372
+            [public_id] => users/signatures/d5je1gygz0nmfxbbjzyb
+            [version] => 1738798011
+            [version_id] => 8f7a2b765febc8566957ce9e9f98e0df
+            [signature] => ec8d36f40ba09da25b05817cdb9aef3eb05bf5d1
+            [width] => 1920
+            [height] => 1080
+            [format] => png
+            [resource_type] => image
+            [created_at] => 2025-02-05T23:26:51Z
+            [tags] => Array
+                (
+                )
+
+            [bytes] => 800722
+            [type] => upload
+            [etag] => c4100aeee333f21095d34001a184b966
+            [placeholder] => 
+            [url] => http://res.cloudinary.com/dfgrpa88v/image/upload/v1738798011/users/signatures/d5je1gygz0nmfxbbjzyb.png
+            [secure_url] => https://res.cloudinary.com/dfgrpa88v/image/upload/v1738798011/users/signatures/d5je1gygz0nmfxbbjzyb.png
+            [asset_folder] => users/signatures
+            [display_name] => d5je1gygz0nmfxbbjzyb
+            [original_filename] => phpA78B
+            [original_extension] => tmp
+            [api_key] => 536826949961969
+        )
+
+)
+Cloudinary\Api\ApiResponse Object
+(
+    [rateLimitResetAt] => 
+    [rateLimitAllowed] => 0
+    [rateLimitRemaining] => 0
+    [headers] => Array
+        (
+            [Date] => Array
+                (
+                    [0] => Wed, 05 Feb 2025 23:30:01 GMT
+                )
+
+            [Content-Type] => Array
+                (
+                    [0] => application/json; charset=utf-8
+                )
+
+            [Transfer-Encoding] => Array
+                (
+                    [0] => chunked
+                )
+
+            [Connection] => Array
+                (
+                    [0] => keep-alive
+                )
+
+            [Vary] => Array
+                (
+                    [0] => Accept-Encoding
+                )
+
+            [Status] => Array
+                (
+                    [0] => 200 OK
+                )
+
+            [Cache-Control] => Array
+                (
+                    [0] => max-age=0, private, must-revalidate
+                )
+
+            [X-XSS-Protection] => Array
+                (
+                    [0] => 1; mode=block
+                )
+
+            [X-Request-Id] => Array
+                (
+                    [0] => c94ce1be3af07b5f9f6dc256148f5237
+                )
+
+            [X-UA-Compatible] => Array
+                (
+                    [0] => IE=Edge,chrome=1
+                )
+
+            [ETag] => Array
+                (
+                    [0] => "33c92e4433f5d4f8c03ed6c92f9769ed"
+                )
+
+            [Server] => Array
+                (
+                    [0] => cloudinary
+                )
+
+        )
+
+    [storage:ArrayObject:private] => Array
+        (
+            [asset_id] => 86ac69f6402a4db7e6af070717c8ae1e
+            [public_id] => users/signatures/iew3v8f1yxa5ii4noupt
+            [version] => 1738798200
+            [version_id] => d877dc867ee2242612826250d7270c75
+            [signature] => d49ee7463c75fb1abf0b1191e6a7a07939516c46
+            [width] => 1920
+            [height] => 1080
+            [format] => png
+            [resource_type] => image
+            [created_at] => 2025-02-05T23:30:00Z
+            [tags] => Array
+                (
+                )
+
+            [bytes] => 800722
+            [type] => upload
+            [etag] => c4100aeee333f21095d34001a184b966
+            [placeholder] => 
+            [url] => http://res.cloudinary.com/dfgrpa88v/image/upload/v1738798200/users/signatures/iew3v8f1yxa5ii4noupt.png
+            [secure_url] => https://res.cloudinary.com/dfgrpa88v/image/upload/v1738798200/users/signatures/iew3v8f1yxa5ii4noupt.png
+            [asset_folder] => users/signatures
+            [display_name] => iew3v8f1yxa5ii4noupt
+            [original_filename] => php8AFD
+            [original_extension] => tmp
+            [api_key] => 536826949961969
+        )
+
+)

@@ -3,9 +3,6 @@
 require_once '../vendor/autoload.php';
 Dotenv\Dotenv::createImmutable(__DIR__ . '/../admin/')->load();
 
-// Start the session
-session_start();
-
 // Fetch credentials from the environment
 $validUsername = $_ENV['DB_USERNAME'];
 $validPasswordHash = $_ENV['DB_PASSWORD'];
@@ -26,6 +23,9 @@ if (isset($_POST['login'])) {
 
     // Validate the password securely
     if (!password_verify($inputPassword, $validPasswordHash)) {
+        session_unset();
+        session_destroy();
+        session_start();
         $_SESSION['status'] = 'failed';
         $_SESSION['failed'] = 'Incorrect password';
         header("Location: /login");
@@ -36,6 +36,9 @@ if (isset($_POST['login'])) {
     session_regenerate_id(true);  // Prevent session fixation
 
     // Set session variables for logged-in user
+    session_unset();
+    session_destroy();
+    session_start();
     $_SESSION['login'] = true;
     $_SESSION['username'] = $validUsername;
     $_SESSION['status'] = 'success';

@@ -15,52 +15,11 @@
                 <th scope="col">Name</th>
                 <th scope="col">Contact</th>
                 <th scope="col">Address</th>
-                <th scope="col">Status</th>
                 <th scope="col">History</th>
+                <th scope="col">Documents</th>
             </tr>
         </thead>
         <tbody id="showdata">
-
-            <?php
-            $fetchData = mysqli_query($conn, "SELECT * FROM employee");
-            while ($result = mysqli_fetch_assoc($fetchData)) {
-                // Map status codes to their respective labels
-                $statuses = [
-                    1 => 'WFH',
-                    2 => 'On-site',
-                    3 => 'Resigned',
-                ];
-
-                // Get status label based on the value in database, or default to 'Unknown'
-                $status = $statuses[(int) $result['status']] ?? 'Unknown';
-                ?>
-                <tr>
-                    <td>
-                        <p class="my-1"><?= htmlspecialchars($result['employee_id']) ?></p>
-                    </td>
-                    <td>
-                        <p class="my-1"><?= htmlspecialchars($result['fname'] . ' ' . $result['lname']) ?></p>
-                    </td>
-                    <td>
-                        <p class="my-1"><?= htmlspecialchars($result['contact']) ?></p>
-                    </td>
-                    <td>
-                        <p class="my-1">
-                            <?= htmlspecialchars($result['street'] . ' ' . $result['brgy'] . ' ' . $result['city'] . ' ' . $result['province'] . ' ' . $result['region'] . ' ' . $result['zip']) ?>
-                        </p>
-                    </td>
-                    <td>
-                        <p class="my-1"><?= $status ?>
-                    </td>
-                    <td>
-                        <a href="/view?employee_id= <?= $result['employee_id'] ?>">
-                            <button class="btn btn-dark h-25">View</button>
-                        </a>
-                    </td>
-                </tr>
-                <?php
-            }
-            ?>
         </tbody>
     </table>
     <div class="text-white">
@@ -108,12 +67,16 @@
                                 html += "<td>" + item.fname + ' ' + item.lname + "</td>";
                                 html += "<td>" + item.contact + "</td>";
                                 html += "<td>" + item.street + ' ' + item.brgy + ' ' + item.city + ' ' + item.province + ' ' + item.region + ' ' + item.zip + "</td>";
-                                html += "<td>" + statusLabel + "</td>";
                                 html += `<td>
                                                 <a href="/view?employee_id=${item.employee_id}">
                                                     <button class="btn btn-dark">View</button>
                                                 </a>
                                             </td>`;
+                                html += `<td>
+                                            <a href="/inventory-custody?employee_id=${item.employee_id}">
+                                                <button class="btn btn-danger">View</button>
+                                            </a>
+                                        </td>`;
                                 html += "</tr>";
                             });
 
