@@ -1,24 +1,43 @@
 <?php
 // Fetch Computer Specifications
-if (isset($_GET['cname']) && !empty($_GET['cname'])) {
-    $cname_id = $_GET['cname'];
+if (isset($_GET['cname_id']) && !empty($_GET['cname_id'])) {
+    $cname_id = $_GET['cname_id'];
 
-    // Prepare a single query to fetch all relevant data
-    $fetchSpecs = $conn->prepare("
-        SELECT c.cname, a.assets_id, a.assets, a.sn, a.brand, a.model 
-        FROM computer c 
-        LEFT JOIN assets a ON a.assets_id = c.assets_id 
-        WHERE c.cname = ?
-    ");
-    $fetchSpecs->bind_param("s", $cname_id);
-    $fetchSpecs->execute();
-    $result = $fetchSpecs->get_result();
+    // Fetch computer record
+    $fetchComputer = $conn->prepare("SELECT cname, assets_id FROM computer WHERE cname_id = ?");
+    $fetchComputer->bind_param("s", $cname_id);
+    $fetchComputer->execute();
+    $result = $fetchComputer->get_result();
+    $computerData = $result->fetch_assoc();
 
-    // Fetch all rows into an array
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    if ($computerData) {
+        $cname = $computerData['cname']; // Get computer name
+        $assets_ids = unserialize($computerData['assets_id']); // Unserialize assets_id
 
-    // Get the computer name from the first row
-    $cname = $rows[0]['cname'];
+        if (!empty($assets_ids)) {
+            // Prepare placeholders for query
+            $placeholders = implode(',', array_fill(0, count($assets_ids), '?'));
+
+            // Fetch asset details
+            $fetchAssets = $conn->prepare("
+                SELECT assets_id, assets, sn, brand, model 
+                FROM assets 
+                WHERE assets_id IN ($placeholders)
+            ");
+
+            // Bind parameters dynamically
+            $fetchAssets->bind_param(str_repeat('s', count($assets_ids)), ...$assets_ids);
+            $fetchAssets->execute();
+            $assetsResult = $fetchAssets->get_result();
+            // $rows = $assetsResult->fetch_all(MYSQLI_ASSOC);
+        }
+        // else {
+        //     $rows = [];
+        // }
+    } else {
+        $cname = 'N/A';
+        $rows = [];
+    }
 }
 ?>
 <div class="container py-2">
@@ -38,12 +57,13 @@ if (isset($_GET['cname']) && !empty($_GET['cname'])) {
                         <th scope="col">BRAND</th>
                         <th scope="col">MODEL</th>
                         <th scope="col">S/N</th>
+                        <th scope="col" class="text-center">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     // Loop through all the rows
-                    foreach ($rows as $specs) {
+                    while ($specs = $assetsResult->fetch_assoc()) {
                         ?>
                         <tr>
                             <td>
@@ -61,7 +81,32 @@ if (isset($_GET['cname']) && !empty($_GET['cname'])) {
                             <td>
                                 <p class="my-2"><?= htmlspecialchars($specs['sn']) ?></p>
                             </td>
+                            <td class="d-flex align-items-center justify-content-center">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?= htmlspecialchars($specs['assets_id']) ?>">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
                         </tr>
+                        <!-- Delete Modal for this asset -->
+                        <div class="modal fade" id="deleteModal<?= htmlspecialchars($specs['assets_id']) ?>" data-bs-keyboard="true" tabindex="-1" aria-labelledby="deleteModalLabel<?= htmlspecialchars($specs['assets_id']) ?>" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel<?= htmlspecialchars($specs['assets_id']) ?>">Confirm Deletion</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to remove <?= htmlspecialchars($specs['assets']) ?>? This action cannot be undone.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <a href="/remove-parts?assets_id=<?= htmlspecialchars($specs['assets_id']) ?>">
+                                            <button type="button" class="btn btn-danger">Delete</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <?php
                     }
                     ?>

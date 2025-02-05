@@ -3,8 +3,14 @@ if (isset($_POST['build-pc'])) {
     $cname = $_POST['cname'];  // Single value (not an array)
     $assets_id = $_POST['assets_id'];  // Array of asset IDs
 
+    // Ensure $assets_id is properly serialized
+    $serialized_assets_id = serialize($assets_id);
+
+    // Generate timestamp
+    $microtime = microtime(true);
     $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
 
+    // Create cname_id
     $cname_id = $cname . '_' . $created_at;
 
     // Prepare the statement
@@ -18,11 +24,9 @@ if (isset($_POST['build-pc'])) {
         exit();
     }
 
-    // Loop through ALL ASSETS
-    foreach ($assets_id as $assetId) {
-        $stmt->bind_param("ssss", $cname_id, $cname, $assetId, $created_at);
-        $stmt->execute();
-    }
+    // Bind serialized assets_id
+    $stmt->bind_param("ssss", $cname_id, $cname, $serialized_assets_id, $created_at);
+    $stmt->execute();
 
     $stmt->close();
     $conn->close();

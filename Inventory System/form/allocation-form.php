@@ -4,8 +4,11 @@ if (isset($_POST['allocate'])) {
     $employee_id = mysqli_real_escape_string($conn, $_POST['employee_id']);
     $cname_id = htmlspecialchars(trim($_POST['cname_id']));
     // $cname = htmlspecialchars(trim($_POST['cname']));
-    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
-    $updated_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
+    $microtime = microtime(true); // Get current microtime as a float
+    $milliseconds = sprintf('%03d', ($microtime - floor($microtime)) * 1000); // Extract milliseconds
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . $milliseconds;
+    $updated_at = $created_at; // Use the same timestamp for consistency
+
 
     $status = 1;
 

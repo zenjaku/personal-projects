@@ -9,9 +9,10 @@ if (isset($_POST['return'])) {
     }
 
     $employee_id = $_POST['employee_id'];
-    $microtime = microtime(true);
-    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
-    $updated_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . substr($microtime, -3);
+    $microtime = microtime(true); // Get current microtime as a float
+    $milliseconds = sprintf('%03d', ($microtime - floor($microtime)) * 1000); // Extract milliseconds
+    $created_at = date('Y-m-d H:i:s', (int) $microtime) . '.' . $milliseconds;
+    $updated_at = $created_at; // Use the same timestamp for consistency
 
     $getData = $conn->query("SELECT allocation.cname_id, computer.cname, employee.employee_id 
                                     FROM allocation 

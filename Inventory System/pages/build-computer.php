@@ -25,142 +25,142 @@ require('server/drop-downs/parts.php');
                                 </tr>
                             </thead>
                             <tbody id="showassets">
-                                
-<script>
-    $(document).ready(function () {
-        var currentPage = 1;
-        var addedAssets = []; // Track added asset IDs
-        var singleAddParts = ['CPU', 'Motherboard', 'GPU', 'Power Supply']; // Parts that can only be added once
 
-        // Function to fetch data based on search term
-        function fetchData(page) {
-            currentPage = page;
-            var getAssets = $('#getAssets').val().trim();
+                                <script>
+                                    $(document).ready(function () {
+                                        var currentPage = 1;
+                                        var addedAssets = []; // Track added asset IDs
+                                        var singleAddParts = ['CPU', 'Motherboard', 'GPU', 'Power Supply']; // Parts that can only be added once
 
-            $.ajax({
-                method: 'POST',
-                url: 'server/jquery/fetch_parts.php',
-                data: {
-                    name: getAssets,
-                    page: page,
-                    exclude: addedAssets // Send the excluded assets
-                },
-                success: function (response) {
-                    console.log("Response from fetch_parts.php:", response); // Log the response for debugging
-                    try {
-                        var data = JSON.parse(response);
-                        var html = '';
-                        if (data.data.length > 0) {
-                            data.data.forEach(function (item) {
-                                html += `<tr>
-                                            <td>${item.assets_id}</td>
-                                            <td>${item.assets}</td>
-                                            <td>${item.brand}</td>
-                                            <td>${item.model}</td>
-                                            <td>${item.sn}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-warning mb-3 add-part" data-assets-id="${item.assets_id}" data-assets="${item.assets}">
-                                                    <i class="fa-solid fa-circle-plus"></i>
-                                                </button>
-                                            </td>
-                                        </tr>`;
-                            });
-                        } else {
-                            html = '<tr><td colspan="6">No parts found</td></tr>';
-                        }
-                        $('#showdata').html(html);
-                    } catch (e) {
-                        console.error("Error parsing response:", e);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("AJAX Error:", error);
-                }
-            });
-        }
+                                        // Function to fetch data based on search term
+                                        function fetchData(page) {
+                                            currentPage = page;
+                                            var getAssets = $('#getAssets').val().trim();
 
-        // Fetch data on page load
-        fetchData(1);
+                                            $.ajax({
+                                                method: 'POST',
+                                                url: 'server/jquery/fetch_parts.php',
+                                                data: {
+                                                    name: getAssets,
+                                                    page: page,
+                                                    exclude: addedAssets // Send the excluded assets
+                                                },
+                                                success: function (response) {
+                                                    console.log("Response from fetch_parts.php:", response); // Log the response for debugging
+                                                    try {
+                                                        var data = JSON.parse(response);
+                                                        var html = '';
+                                                        if (data.data.length > 0) {
+                                                            data.data.forEach(function (item) {
+                                                                html += `<tr>
+                                                                            <td>${item.assets_id}</td>
+                                                                            <td>${item.assets}</td>
+                                                                            <td>${item.brand}</td>
+                                                                            <td>${item.model}</td>
+                                                                            <td>${item.sn}</td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-warning mb-3 add-part" data-assets-id="${item.assets_id}" data-assets="${item.assets}">
+                                                                                    <i class="fa-solid fa-circle-plus"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>`;
+                                                            });
+                                                        } else {
+                                                            html = '<tr><td colspan="6">No parts found</td></tr>';
+                                                        }
+                                                        $('#showdata').html(html);
+                                                    } catch (e) {
+                                                        console.error("Error parsing response:", e);
+                                                    }
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    console.error("AJAX Error:", error);
+                                                }
+                                            });
+                                        }
 
-        // Add Part to Build
-        $(document).on('click', '.add-part', function () {
-            var row = $(this).closest('tr');
-            var assets_id = $(this).data('assets-id');
-            var assets = $(this).data('assets');
-            var brand = row.find('td:eq(2)').text();
-            var model = row.find('td:eq(3)').text();
-            var sn = row.find('td:eq(4)').text();
+                                        // Fetch data on page load
+                                        fetchData(1);
 
-            if (addedAssets.includes(assets_id)) {
-                showToast('This part is already added.', 'error');
-                return;
-            }
+                                        // Add Part to Build
+                                        $(document).on('click', '.add-part', function () {
+                                            var row = $(this).closest('tr');
+                                            var assets_id = $(this).data('assets-id');
+                                            var assets = $(this).data('assets');
+                                            var brand = row.find('td:eq(2)').text();
+                                            var model = row.find('td:eq(3)').text();
+                                            var sn = row.find('td:eq(4)').text();
 
-            // Check if the part is in singleAddParts and already added
-            if (singleAddParts.includes(assets)) {
-                var alreadyAdded = $('#showassets').find(`input[name="assets[]"][value="${assets}"]`).length > 0;
-                if (alreadyAdded) {
-                    showToast(`Only one ${assets} can be added.`, 'error');
-                    return;
-                }
-            }
+                                            if (addedAssets.includes(assets_id)) {
+                                                showToast('This part is already added.', 'error');
+                                                return;
+                                            }
 
-            // Add the part to the list
-            addedAssets.push(assets_id);
-            $('#showassets').append(`<tr>
-                <td><input type="text" class="border-0" readonly name="assets_id[]" value="${assets_id}"></td>
-                <td><input type="text" class="border-0" readonly name="assets[]" value="${assets}"></td>
-                <td><input type="text" class="border-0" readonly name="brand[]" value="${brand}"></td>
-                <td><input type="text" class="border-0" readonly name="model[]" value="${model}"></td>
-                <td><input type="text" class="border-0" readonly name="sn[]" value="${sn}"></td>
-                <td><button type="button" class="btn btn-danger mb-3 remove-part"><i class="fa-solid fa-trash-can"></i></button></td>
-            </tr>`);
+                                            // Check if the part is in singleAddParts and already added
+                                            if (singleAddParts.includes(assets)) {
+                                                var alreadyAdded = $('#showassets').find(`input[name="assets[]"][value="${assets}"]`).length > 0;
+                                                if (alreadyAdded) {
+                                                    showToast(`Only one ${assets} can be added.`, 'error');
+                                                    return;
+                                                }
+                                            }
 
-            showToast(`${assets} added successfully.`, 'success');
-        });
+                                            // Add the part to the list
+                                            addedAssets.push(assets_id);
+                                            $('#showassets').append(`<tr>
+                                                                        <td><input type="text" class="border-0" readonly name="assets_id[]" value="${assets_id}"></td>
+                                                                        <td><input type="text" class="border-0" readonly name="assets[]" value="${assets}"></td>
+                                                                        <td><input type="text" class="border-0" readonly name="brand[]" value="${brand}"></td>
+                                                                        <td><input type="text" class="border-0" readonly name="model[]" value="${model}"></td>
+                                                                        <td><input type="text" class="border-0" readonly name="sn[]" value="${sn}"></td>
+                                                                        <td><button type="button" class="btn btn-danger mb-3 remove-part"><i class="fa-solid fa-trash-can"></i></button></td>
+                                                                    </tr>`);
 
-        // Remove Part from Build
-        $(document).on('click', '.remove-part', function () {
-            var row = $(this).closest('tr');
-            var assets_id = row.find('input[name="assets_id[]"]').val();
-            var assets = row.find('input[name="assets[]"]').val();
+                                            showToast(`${assets} added successfully.`, 'success');
+                                        });
 
-            // Remove from the list
-            addedAssets = addedAssets.filter(id => id !== assets_id);
-            row.remove();
+                                        // Remove Part from Build
+                                        $(document).on('click', '.remove-part', function () {
+                                            var row = $(this).closest('tr');
+                                            var assets_id = row.find('input[name="assets_id[]"]').val();
+                                            var assets = row.find('input[name="assets[]"]').val();
 
-            showToast(`${assets} removed successfully.`, 'success');
-        });
+                                            // Remove from the list
+                                            addedAssets = addedAssets.filter(id => id !== assets_id);
+                                            row.remove();
 
-        // Search handler for real-time search
-        $('#getAssets').on('input', function () {
-            fetchData(1); // Reload parts on every search term change
-        });
+                                            showToast(`${assets} removed successfully.`, 'success');
+                                        });
 
-        // Function to show toast notifications
-        function showToast(message, status) {
-            const bgColor = status === 'success' ? 'warning' : 'danger';
-            const textColor = bgColor === 'danger' ? 'text-white' : '';
-            const toast = document.createElement('div');
-            toast.className = `toast show bg-${bgColor} ${textColor}`;
-            toast.setAttribute('role', 'alert');
-            toast.innerHTML = `
-            <div class="toast-body justify-content-between d-flex">
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-            </div>
-        `;
-            let toastContainer = document.querySelector('.toast-container');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
-                document.body.appendChild(toastContainer);
-            }
-            toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-    });
-</script>
+                                        // Search handler for real-time search
+                                        $('#getAssets').on('input', function () {
+                                            fetchData(1); // Reload parts on every search term change
+                                        });
+
+                                        // Function to show toast notifications
+                                        function showToast(message, status) {
+                                            const bgColor = status === 'success' ? 'warning' : 'danger';
+                                            const textColor = bgColor === 'danger' ? 'text-white' : '';
+                                            const toast = document.createElement('div');
+                                            toast.className = `toast show bg-${bgColor} ${textColor}`;
+                                            toast.setAttribute('role', 'alert');
+                                            toast.innerHTML = `
+                                                                <div class="toast-body justify-content-between d-flex">
+                                                                    ${message}
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                                                                </div>
+                                                            `;
+                                            let toastContainer = document.querySelector('.toast-container');
+                                            if (!toastContainer) {
+                                                toastContainer = document.createElement('div');
+                                                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                                                document.body.appendChild(toastContainer);
+                                            }
+                                            toastContainer.appendChild(toast);
+                                            setTimeout(() => toast.remove(), 3000);
+                                        }
+                                    });
+                                </script>
 
 
 

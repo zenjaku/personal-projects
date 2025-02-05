@@ -8,35 +8,45 @@ $offset = ($page - 1) * $limit;
 // Sanitize input for search
 $name = isset($_POST['name']) ? mysqli_real_escape_string($conn, $_POST['name']) : '';
 
-// Query the database with pagination and join with the computer table
-$sql = "
-    SELECT assets.assets_id, assets.assets, assets.brand, assets.model, assets.sn, 
-           computer.cname, computer.cname_id, 
-           IF(computer.assets_id IS NOT NULL, 'installed', '') AS status
-    FROM assets
-    LEFT JOIN computer ON assets.assets_id = computer.assets_id
-    WHERE assets.sn LIKE '$name%'
-    ORDER BY assets
-    LIMIT $limit OFFSET $offset
-";
-$query = mysqli_query($conn, $sql);
+// Step 1: Fetch all computer records
+$computerQuery = mysqli_query($conn, "SELECT cname, cname_id, assets_id FROM computer");
 
-// Fetch the data
-$data = [];
-while ($row = mysqli_fetch_assoc($query)) {
-    $data[] = [
-        'assets_id' => $row['assets_id'],
-        'assets' => $row['assets'],
-        'brand' => $row['brand'],
-        'model' => $row['model'],
-        'sn' => $row['sn'],
-        'cname_id' => $row['cname_id'] ? $row['cname_id'] : '',
-        'cname' => $row['cname'] ? $row['cname'] : 'Available Part',
-        'status' => $row['status'] ? 'installed' : 'Available', // Change allocated to installed
-    ];
+$computerAssets = [];
+while ($row = mysqli_fetch_assoc($computerQuery)) {
+    $assetsArray = unserialize($row['assets_id']);
+    if (is_array($assetsArray)) {
+        foreach ($assetsArray as $asset) {
+            $computerAssets[$asset] = [
+                'cname' => $row['cname'],
+                'cname_id' => $row['cname_id']
+            ];
+        }
+    }
 }
 
-// Count total rows for pagination
+// Step 2: Fetch paginated asset data
+$sql = "SELECT assets_id, assets, brand, model, sn FROM assets WHERE sn LIKE '$name%' ORDER BY assets LIMIT $limit OFFSET $offset";
+$query = mysqli_query($conn, $sql);
+
+$data = [];
+while ($row = mysqli_fetch_assoc($query)) {
+    $assetID = $row['assets_id'];
+
+    // Check if the asset exists in the computer table
+    if (isset($computerAssets[$assetID])) {
+        $row['cname_id'] = $computerAssets[$assetID]['cname_id'];
+        $row['cname'] = $computerAssets[$assetID]['cname'];
+        $row['status'] = 'installed';
+    } else {
+        $row['cname_id'] = '';
+        $row['cname'] = 'Available Part';
+        $row['status'] = 'Available';
+    }
+
+    $data[] = $row;
+}
+
+// Step 3: Count total records for pagination
 $totalQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM assets WHERE sn LIKE '$name%'");
 $totalRows = mysqli_fetch_assoc($totalQuery)['total'];
 $totalPages = ceil($totalRows / $limit);

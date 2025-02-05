@@ -12,11 +12,13 @@ session_start();
     <link rel="shortcut icon" href="assets/p_1.png" type="image/x-icon">
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="css/output/min3.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://kit.fontawesome.com/e81967d7b9.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
-    <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
+    <!-- <script src="js/bootstrap/bootstrap.bundle.min.js"></script> -->
+    <script src="js/output/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <title>Inventory System</title>
 </head>

@@ -77,7 +77,7 @@
 
                                 if (item.status === 'installed') {
                                     html += `<td>
-                                            <a href="/add-to?cname=${item.cname}" style="pointer-events: none; opacity: 0.5;">
+                                            <a href="/add-to?cname=${item.assets_id}" style="pointer-events: none; opacity: 0.5;">
                                                 <button class="${buttonClass}" ${isDisabled}>
                                                     ${buttonText}
                                                 </button>

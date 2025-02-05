@@ -17,13 +17,15 @@ $routes = [
     '~^/register$~' => 'pages/register.php',
     '~^/parts$~' => 'pages/parts.php',
     '~^/build$~' => 'pages/build-computer.php',
+    '~^/remove-parts$~' => 'server/remove-parts.php',
+    '~^/add-to$~' => 'pages/add-to.php',
 
     // Form submissions (should be protected)
     '~^/add-assets$~' => 'form/inventory-form.php',
     '~^/register-employee$~' => 'form/register-form.php',
     '~^/allocation-assets$~' => 'form/allocation-form.php',
     '~^/build-pc$~' => 'form/build-form.php',
-    '~^/add-to$~' => 'form/add-to-form.php',
+    '~^/add-asset$~' => 'form/add-to-form.php',
     '~^/transfer-assets$~' => 'form/transfer-form.php',
     '~^/return-assets$~' => 'form/return-form.php',
 
@@ -52,7 +54,8 @@ $protected_routes = [
     '/add-to',
     '/build-pc',
     '/transfer-assets',
-    '/return-assets'
+    '/return-assets',
+    '/remove-parts'
 ];
 
 foreach ($routes as $pattern => $file) {

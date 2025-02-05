@@ -3,29 +3,55 @@ include '../connections.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $assetID = mysqli_real_escape_string($conn, $_POST['assetID']);
+    $cname_id = mysqli_real_escape_string($conn, $_POST['assetID']);
 
-    // Query to get all assets that correspond to the cname selected in the computer table
-    $sql = "SELECT * FROM assets WHERE assets_id IN (SELECT assets_id FROM computer WHERE cname_id = '$assetID')";
-    $query = mysqli_query($conn, $sql);
+    // Fetch the serialized assets_id from the computer table
+    $sql = "SELECT assets_id FROM computer WHERE cname_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $cname_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $computerData = $result->fetch_assoc();
 
-    // Initialize an array to hold the data
-    $data = [];
-    while ($row = mysqli_fetch_assoc($query)) {
-        $data[] = [
-            'assets_id' => $row['assets_id'],
-            'assets' => $row['assets'], 
-            'brand' => $row['brand'],
-            'model' => $row['model'],
-            'sn' => $row['sn'],
-        ];
-    }
+    if ($computerData) {
+        // Unserialize the assets_id field
+        $assets_ids = unserialize($computerData['assets_id']);
 
-    // Return JSON response
-    if (empty($data)) {
-        echo json_encode(['message' => 'No assets found']);
+        if (!empty($assets_ids)) {
+            // Prepare placeholders for query
+            $placeholders = implode(',', array_fill(0, count($assets_ids), '?'));
+
+            // Fetch asset details
+            $fetchAssets = $conn->prepare("
+                SELECT assets_id, assets, brand, model, sn 
+                FROM assets 
+                WHERE assets_id IN ($placeholders)
+            ");
+
+            // Bind parameters dynamically
+            $fetchAssets->bind_param(str_repeat('s', count($assets_ids)), ...$assets_ids);
+            $fetchAssets->execute();
+            $assetsResult = $fetchAssets->get_result();
+
+            // Initialize an array to hold the data
+            $data = [];
+            while ($row = $assetsResult->fetch_assoc()) {
+                $data[] = [
+                    'assets_id' => $row['assets_id'],
+                    'assets' => $row['assets'],
+                    'brand' => $row['brand'],
+                    'model' => $row['model'],
+                    'sn' => $row['sn'],
+                ];
+            }
+
+            // Return JSON response
+            echo !empty($data) ? json_encode($data) : json_encode(['message' => 'No assets found']);
+        } else {
+            echo json_encode(['message' => 'No assets found']);
+        }
     } else {
-        echo json_encode($data);  // Return the assets data
+        echo json_encode(['message' => 'Computer not found']);
     }
 }
 ?>
