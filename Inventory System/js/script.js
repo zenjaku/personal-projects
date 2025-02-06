@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSpinner();
     checkScreenWidth();
     editBtn();
+    getActivePage();
 })
 
 window.addEventListener('resize', checkScreenWidth);
@@ -15,6 +16,20 @@ function checkScreenWidth() {
         // Redirect to access.html
         window.location.href = "access.html"; // Absolute URL or relative path if appropriate
     }
+}
+
+
+function getActivePage() {
+    const link = window.location.pathname;
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+    sidebarLinks.forEach((sidebarLink) => {
+        if (sidebarLink.getAttribute('href') === link) {
+            sidebarLink.classList.add('active');
+        } else {
+            sidebarLink.classList.remove('active'); // Remove active class from others
+        }
+    });
 }
 
 function editBtn() {

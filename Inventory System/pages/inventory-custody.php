@@ -8,26 +8,16 @@ if (isset($_GET['employee_id'])) {
     $employee_id = $_GET['employee_id'];
 
     // Fetch computer history and cname using cname_id
-    $stmt = $conn->prepare("SELECT ch.*, c.cname, c.assets_id 
-                            FROM computer_history ch
-                            LEFT JOIN computer c ON ch.cname_id = c.cname_id
-                            WHERE ch.employee_id = ? ORDER BY created_at DESC");
+    $stmt = $conn->prepare("SELECT a.*, c.cname, c.assets_id 
+                            FROM allocation a
+                            LEFT JOIN computer c ON a.cname_id = c.cname_id
+                            WHERE a.employee_id = ? AND a.status = 1 ORDER BY created_at DESC");
     $stmt->bind_param("s", $employee_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     $computerAssets = [];
     while ($row = $result->fetch_assoc()) {
-        // Determine the asset history status
-        if (!empty($row['return_id'])) {
-            $row['status_message'] = 'Returned';
-        } elseif (!empty($row['transfer_id'])) {
-            $row['status_message'] = 'Transferred';
-        } elseif (!empty($row['allocation_id'])) {
-            $row['status_message'] = 'Allocated';
-        } else {
-            $row['status_message'] = 'Unknown';
-        }
 
         $rows[] = $row;
         $computerAssets[] = $row['assets_id']; // Collect serialized assets_id
@@ -64,8 +54,6 @@ if (isset($_GET['employee_id'])) {
                     $stmt->execute();
                     $result = $stmt->get_result();
                     while ($asset = $result->fetch_assoc()) {
-                        // Include the history status in asset details
-                        $asset['status_message'] = $rows[$index]['status_message'];
                         $assetsDetails[] = $asset;
                     }
                 }
@@ -196,7 +184,6 @@ if (isset($_GET['employee_id'])) {
                         <th scope="col">Brand</th>
                         <th scope="col">Model</th>
                         <th scope="col">S/N</th>
-                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,7 +199,6 @@ if (isset($_GET['employee_id'])) {
                                 <td><?= htmlspecialchars($asset['brand']) ?></td>
                                 <td><?= htmlspecialchars($asset['model']) ?></td>
                                 <td><?= htmlspecialchars($asset['sn']) ?></td>
-                                <td class="fw-bold"><?= htmlspecialchars($asset['status_message']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

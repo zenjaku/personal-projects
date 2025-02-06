@@ -13,7 +13,7 @@
             <table class="table table-bordered">
                 <thead class="table-dark">
                     <tr>
-                        <!-- <th>ASSOCIATED PC</th> -->
+                        <th>ASSOCIATED PC</th>
                         <th>SPECIFIED</th>
                         <th>BRAND</th>
                         <th>MODEL</th>
@@ -65,6 +65,7 @@
 
                             data.data.forEach(function (item) {
                                 html += "<tr>";
+                                html += "<td>" + item.cname + "</td>";
                                 html += "<td>" + item.assets + "</td>";
                                 html += "<td>" + item.brand + "</td>";
                                 html += "<td>" + item.model + "</td>";

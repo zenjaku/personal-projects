@@ -34,28 +34,42 @@
             </ul>
         </nav>
     </div>
+
+    <!-- <script>
+        function generateQRCode(cname_id) {
+            new QRCode(document.getElementById("qrcode"), {
+                text: cname_id,
+                width: 128,
+                height: 128
+            });
+        }
+
+        // Example: Replace 'PC123456' with actual cname_id
+        generateQRCode("<?= $cname_id ?>");
+    </script> -->
     <script>
+
         $(document).ready(function () {
             var currentPage = 1; // Track the current page globally
 
             // Function to fetch data with pagination
             function fetchData(page) {
-                currentPage = page; // Update the global currentPage variable
-                var getAssets = $('#getAssets').val().trim(); // Get search query
+                currentPage = page;
+                var getAssets = $('#getAssets').val().trim();
 
                 $.ajax({
                     method: 'POST',
-                    url: 'server/jquery/inventory.php', // Ensure this path is correct
+                    url: 'server/jquery/inventory.php',
                     data: {
-                        name: getAssets,  // Include search query
-                        page: page        // Include current page for pagination
+                        name: getAssets,
+                        page: page
                     },
                     success: function (response) {
                         try {
                             var data = JSON.parse(response);
 
                             if (data.message) {
-                                $("#showdata").html("<tr><td colspan='4'>No assets found</td></tr>");
+                                $("#showdata").html("<tr><td colspan='5'>No assets found</td></tr>");
                             } else {
                                 var html = '';
                                 data.data.forEach(function (item) {
@@ -66,7 +80,8 @@
                                     html += "<td><a href='/history?cname_id=" + item.cname_id + "'><button type='button' class='btn btn-warning'>View</button></a></td>";
                                     html += "</tr>";
                                 });
-                                $("#showdata").html(html); // Inject response into tbody
+
+                                $("#showdata").html(html);
 
                                 // Pagination logic
                                 var paginationHtml = '';
@@ -74,15 +89,15 @@
                                     var activeClass = (i === currentPage) ? 'active' : '';
                                     paginationHtml += "<li class='page-item " + activeClass + "'><a class='page-link' href='#' data-page='" + i + "'>" + i + "</a></li>";
                                 }
-                                $('#pagination').html(paginationHtml); // Inject pagination links
+                                $('#pagination').html(paginationHtml);
                             }
                         } catch (e) {
                             console.error("Error parsing JSON response", e);
-                            $("#showdata").html("<tr><td colspan='4'>An error occurred while fetching data.</td></tr>");
+                            $("#showdata").html("<tr><td colspan='5'>An error occurred while fetching data.</td></tr>");
                         }
                     },
                     error: function () {
-                        $("#showdata").html("<tr><td colspan='4'>An error occurred while fetching data.</td></tr>");
+                        $("#showdata").html("<tr><td colspan='5'>An error occurred while fetching data.</td></tr>");
                     }
                 });
             }
@@ -196,7 +211,7 @@
                     <?php } ?>
                 </tbody>
             </table>
-            
+
             <!-- Pagination Links -->
             <div class="text-white">
                 <nav>
