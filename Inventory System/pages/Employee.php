@@ -15,7 +15,6 @@
                 <th scope="col">Name</th>
                 <th scope="col">Contact</th>
                 <th scope="col">Address</th>
-                <th scope="col">History</th>
                 <th scope="col">Documents</th>
             </tr>
         </thead>
@@ -67,11 +66,6 @@
                                 html += "<td>" + item.fname + ' ' + item.lname + "</td>";
                                 html += "<td>" + item.contact + "</td>";
                                 html += "<td>" + item.street + ' ' + item.brgy + ' ' + item.city + ' ' + item.province + ' ' + item.region + ' ' + item.zip + "</td>";
-                                html += `<td>
-                                                <a href="/view?employee_id=${item.employee_id}">
-                                                    <button class="btn btn-dark">View</button>
-                                                </a>
-                                            </td>`;
                                 html += `<td>
                                             <a href="/inventory-custody?employee_id=${item.employee_id}">
                                                 <button class="btn btn-danger">View</button>

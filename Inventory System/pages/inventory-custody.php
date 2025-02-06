@@ -114,16 +114,10 @@ if (isset($_GET['employee_id'])) {
     <div class="card" id="terms-conditions">
         <div class="card-header p-3">
             <div class="d-flex flex-column justify-content-center align-items-center text-center">
-                <!-- <?php if ($notFound): ?>
-                    <h2 class="text-center"><?= $notFound ?></h2>
-                <?php else: ?>
-                    <h2>Current Assets of</h2>
-                    <h3 class="font-weight"><?= isset($show) ? htmlspecialchars($show['fname'] . ' ' . $show['lname']) : '' ?></h3>
-                    <h3 class="fst-italic fs-5">(<?= isset($employee_id) ? htmlspecialchars($employee_id) : '' ?>)</h3>
-                <?php endif; ?> -->
-                <h2>HPL Gamedesign Corporation</h2>
-                <p>82 Road 3 Project 6 Quezon City, Metro Manila, 1100</p>
-                <p>admin@hplgamedesign.com ᐧ 09202773422 ᐧ (02) 8 808 6920</p>
+                <h2 class="text-uppercase fw-bold">HPL Gamedesign Corporation</h2>
+                <p>82 Road 3 Project 6 Quezon City, Metro Manila, 1100
+                    <br/>
+                    admin@hplgamedesign.com ᐧ 09202773422 ᐧ (02) 8 808 6920</p>
 
             </div>
             <!-- <a href="/employee">
@@ -228,12 +222,28 @@ if (isset($_GET['employee_id'])) {
 
                             </td>
                             <td class="d-flex align-items-center gap-5 justify-content-end" id="custody-radio">
-                                <input type="radio" name="e_status" id="e-new-hire">
-                                <label for="e-new-hire">New Hire</label>
-                                <input type="radio" name="e_status" id="e-wfh">
-                                <label for="e-wfh">WFH</label>
-                                <input type="radio" name="e_status" id="e-temp">
-                                <label for="e-temp">TEMP WFH</label>
+                                <?php if ($show['status'] == 1): ?>
+                                    <input type="radio" name="e_status" id="e-new-hire" checked disabled>
+                                    <label for="e-new-hire">New Hire</label>
+                                    <input type="radio" name="e_status" id="e-wfh" disabled>
+                                    <label for="e-wfh">WFH</label>
+                                    <input type="radio" name="e_status" id="e-temp" disabled>
+                                    <label for="e-temp">TEMP WFH</label>
+                                <?php elseif ($show['status'] == 2): ?>
+                                    <input type="radio" name="e_status" id="e-new-hire" disabled>
+                                    <label for="e-new-hire">New Hire</label>
+                                    <input type="radio" name="e_status" id="e-wfh" checked disabled>
+                                    <label for="e-wfh">WFH</label>
+                                    <input type="radio" name="e_status" id="e-temp" disabled>
+                                    <label for="e-temp">TEMP WFH</label>
+                                <?php else: ?>
+                                    <input type="radio" name="e_status" id="e-new-hire" disabled>
+                                    <label for="e-new-hire">New Hire</label>
+                                    <input type="radio" name="e_status" id="e-wfh" disabled>
+                                    <label for="e-wfh">WFH</label>
+                                    <input type="radio" name="e_status" id="e-temp" checked disabled>
+                                    <label for="e-temp">TEMP WFH</label>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <tr class="fw-bold">
@@ -272,7 +282,8 @@ if (isset($_GET['employee_id'])) {
                                         <!-- Display the uploaded image if it exists -->
                                         <?php if (!empty($imageUrl)): ?>
                                             <div class="d-flex flex-column justify-content-center align-items-center">
-                                                <img src="<?= $imageUrl ?>" alt="Employee Signature" class="img-fluid w-25 mt-5">
+                                                <img src="<?= $imageUrl ?>" alt="Employee Signature"
+                                                    class="img-fluid w-25 mt-5">
                                             </div>
                                         <?php endif; ?>
                                     </div>

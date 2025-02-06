@@ -12,9 +12,25 @@
             <div class="card-body">
                 <div class="row d-flex flex-column gap-3">
                     <div class="col d-flex gap-3 justify-content-start align-items-center">
-                        <div class="form-floating">
-                            <input type="text" name="assets[]" class="form-control group" required>
-                            <label>Assets</label>
+                        <div class="input-group">
+                            <label class="input-group-text" for="assets">Assets</label>
+                            <select class="form-select" name="assets[]" id="assets">
+                                <option selected>-- Choose Assets --</option>
+                                <option value="PROCESSOR">PROCESSOR</option>
+                                <option value="MOTHERBOARD">MOTHERBOARD</option>
+                                <option value="GPU">GPU</option>
+                                <option value="HDD">HDD</option>
+                                <option value="SSD">SSD</option>
+                                <option value="RAM">RAM</option>
+                                <option value="CABLE">CABLE</option>
+                                <option value="HEADSET">HEADSET</option>
+                                <option value="WEBCAM">WEBCAM</option>
+                                <option value="MONITOR">MONITOR</option>
+                                <option value="KEYBOARD">KEYBOARD</option>
+                                <option value="MOUSE">MOUSE</option>
+                                <option value="PEN DISPLAY">PEN DISPLAY</option>
+                                <option value="PEN TABLET">PEN TABLET</option>
+                            </select>
                         </div>
                         <div class="form-floating">
                             <input type="text" name="brand[]" class="form-control group" required>

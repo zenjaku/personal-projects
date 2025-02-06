@@ -2,7 +2,7 @@
     <div class="shadow-lg bg-white p-4 rounded-lg d-flex flex-column align-items-center">
         <h1 class="mb-5">REGISTER</h1>
         <form action="/register-employee" method="post" autocomplete="off" id="registerForm">
-            <div class="row d-flex my-3">
+            <div class="row d-flex">
                 <div class="col-2 form-floating">
                     <input type="text" id="employee_id" name="employee_id" class="form-control"
                         placeholder="Employee ID" required>
@@ -65,11 +65,11 @@
                     <select type="text" id="status" name="status" class="form-control" required>
                         <option class="bg-secondary-subtle" readonly>Work Status</option>
                         <option value="1">
-                            WFH </option>
+                            NEW HIRE </option>
                         <option value="2">
-                            On-site </option>
+                            WFH </option>
                         <option value="3">
-                            Resigned </option>
+                            TEMP WFH </option>
                     </select>
                 </div>
             </div>
@@ -99,87 +99,32 @@
         }
     }
 
-    //jquery
-    // $(document).ready(function () {
-    //     // Load regions on page load
-    //     $.ajax({
-    //         method: 'POST',
-    //         url: 'server/jquery/locations.php',
-    //         data: { action: 'getRegions' },
-    //         success: function (response) {
-    //             var data = JSON.parse(response);
-    //             var options = '<option readonly>Select Region</option>';
-    //             data.forEach(function (item) {
-    //                 options += `<option value="${item.region_c}">${item.region_m}</option>`;
-    //             });
-    //             $("#region").html(options);
-    //         }
-    //     });
-
-    //     // When a region is selected, fetch provinces
-    //     $('#region').on('change', function () {
-    //         var region_code = $(this).val();
-
-    //         if (region_code) {
-    //             $.ajax({
-    //                 method: 'POST',
-    //                 url: 'server/jquery/locations.php',
-    //                 data: { action: 'getProvinces', region_code: region_code },
-    //                 success: function (response) {
-    //                     var data = JSON.parse(response);
-    //                     var options = '<option readonly>Select Province</option>';
-    //                     data.forEach(function (item) {
-    //                         options += `<option value="${item.province_c}">${item.province_m}</option>`;
-    //                     });
-    //                     $("#province").html(options);
-    //                     $("#city").html('<option readonly>Select Municipality/City</option>'); // Reset city dropdown
-    //                 }
-    //             });
-    //         }
-    //     });
-
-    //     // When a province is selected, fetch cities
-    //     $('#province').on('change', function () {
-    //         var province_code = $(this).val();
-
-    //         if (province_code) {
-    //             $.ajax({
-    //                 method: 'POST',
-    //                 url: 'server/jquery/locations.php',
-    //                 data: { action: 'getCities', province_code: province_code },
-    //                 success: function (response) {
-    //                     var data = JSON.parse(response);
-    //                     var options = '<option readonly>Select Municipality/City</option>';
-    //                     data.forEach(function (item) {
-    //                         options += `<option value="${item.citymun_c}">${item.citymun_m}</option>`;
-    //                     });
-    //                     $("#city").html(options);
-    //                 }
-    //             });
-    //         }
-    //     });
-    // });
-
     document.addEventListener("DOMContentLoaded", () => {
         fetch("https://psgc.gitlab.io/api/regions/")
             .then((response) => response.json())
             .then((data) => {
                 const regionSelect = document.getElementById("region");
-                const regionMap = new Map();
                 const provinceSelect = document.getElementById("province");
                 const citySelect = document.getElementById("city");
 
+                // Maps to store name-to-code mappings
+                const regionMap = new Map(); // { regionName: regionCode }
+                const provinceMap = new Map(); // { provinceName: provinceCode }
+                const cityMap = new Map(); // { cityName: cityCode }
+
+                // Populate regions dropdown
                 data.forEach((region) => {
-                    regionMap.set(region.name, region.code);
+                    regionMap.set(region.name, region.code); // Store name-to-code mapping
                     const option = document.createElement("option");
-                    option.value = region.name;
-                    option.textContent = region.name;
+                    option.value = region.name; // Save the name
+                    option.textContent = region.name; // Display the name
                     regionSelect.appendChild(option);
                 });
 
+                // Region change event
                 regionSelect.addEventListener("change", function () {
                     const regionName = this.value;
-                    const regionCode = regionMap.get(regionName);
+                    const regionCode = regionMap.get(regionName); // Get code from name
 
                     provinceSelect.innerHTML = '<option value="" selected>Select Province</option>';
                     citySelect.innerHTML = '<option value="" selected>Select Municipality/City</option>'; // Reset city select
@@ -202,18 +147,22 @@
                                 : Promise.resolve([]),
                         ])
                             .then(([provinces, cities]) => {
+                                provinceMap.clear(); // Clear previous province mappings
                                 provinces.forEach((province) => {
+                                    provinceMap.set(province.name, province.code); // Store name-to-code mapping
                                     const option = document.createElement("option");
-                                    option.value = province.code;
-                                    option.textContent = province.name;
+                                    option.value = province.name; // Save the name
+                                    option.textContent = province.name; // Display the name
                                     provinceSelect.appendChild(option);
                                 });
 
                                 if (regionCode === "130000000") { // If NCR, populate cities
+                                    cityMap.clear(); // Clear previous city mappings
                                     cities.forEach((city) => {
+                                        cityMap.set(city.name, city.code); // Store name-to-code mapping
                                         const option = document.createElement("option");
-                                        option.value = city.name;
-                                        option.textContent = city.name;
+                                        option.value = city.name; // Save the name
+                                        option.textContent = city.name; // Display the name
                                         citySelect.appendChild(option);
                                     });
                                 }
@@ -222,26 +171,69 @@
                     }
                 });
 
-                document.getElementById("province").addEventListener("change", function () {
-                    const provinceCode = this.value;
+                // Province change event
+                provinceSelect.addEventListener("change", function () {
+                    const provinceName = this.value;
+                    const provinceCode = provinceMap.get(provinceName); // Get code from name
                     citySelect.innerHTML = '<option value="" selected>Select Municipality/City</option>';
 
                     if (provinceCode) {
                         fetch(`https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`)
                             .then(res => res.json())
                             .then(cities => {
+                                cityMap.clear(); // Clear previous city mappings
                                 cities.forEach((city) => {
+                                    cityMap.set(city.name, city.code); // Store name-to-code mapping
                                     const option = document.createElement("option");
-                                    option.value = city.name;
-                                    option.textContent = city.name;
+                                    option.value = city.name; // Save the name
+                                    option.textContent = city.name; // Display the name
                                     citySelect.appendChild(option);
                                 });
                             })
                             .catch(error => console.error("Error fetching cities:", error));
                     }
                 });
+
+                // // Form submission event
+                // document.querySelector("form").addEventListener("submit", (event) => {
+                //     event.preventDefault(); // Prevent default form submission
+
+                //     // Get selected names
+                //     const selectedRegionName = regionSelect.value;
+                //     const selectedProvinceName = provinceSelect.value;
+                //     const selectedCityName = citySelect.value;
+
+                //     // Get corresponding codes from maps
+                //     const selectedRegionCode = regionMap.get(selectedRegionName);
+                //     const selectedProvinceCode = provinceMap.get(selectedProvinceName);
+                //     const selectedCityCode = cityMap.get(selectedCityName);
+
+                //     // Log or send data to backend
+                //     console.log("Selected Names:", {
+                //         region: selectedRegionName,
+                //         province: selectedProvinceName,
+                //         city: selectedCityName,
+                //     });
+
+                //     console.log("Corresponding Codes:", {
+                //         region: selectedRegionCode,
+                //         province: selectedProvinceCode,
+                //         city: selectedCityCode,
+                //     });
+
+                //     // Example: Send data to backend
+                //     // fetch("/your-backend-endpoint", {
+                //     //     method: "POST",
+                //     //     body: JSON.stringify({
+                //     //         regionCode: selectedRegionCode,
+                //     //         provinceCode: selectedProvinceCode,
+                //     //         cityCode: selectedCityCode,
+                //     //     }),
+                //     // });
+                // });
             })
             .catch((error) => console.error("Error fetching regions:", error));
     });
+
 
 </script>

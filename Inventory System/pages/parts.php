@@ -5,7 +5,7 @@
                 <h2>Parts and Components</h2>
                 <div id="searchAssets" class="form-outline">
                     <input type="text" class="form-control parts-search" name="assets_id" id="getAssets"
-                        placeholder="Search by Serial Number">
+                        placeholder="Search assets here">
                 </div>
             </div>
         </div>

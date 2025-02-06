@@ -25,7 +25,7 @@ while ($row = mysqli_fetch_assoc($computerQuery)) {
 }
 
 // Step 2: Fetch paginated asset data
-$sql = "SELECT assets_id, assets, brand, model, sn FROM assets WHERE sn LIKE '$name%' ORDER BY assets LIMIT $limit OFFSET $offset";
+$sql = "SELECT assets_id, assets, brand, model, sn FROM assets WHERE assets LIKE '$name%' OR brand LIKE '$name%' OR model LIKE '$name%' OR sn LIKE '$name%' ORDER BY assets LIMIT $limit OFFSET $offset";
 $query = mysqli_query($conn, $sql);
 
 $data = [];

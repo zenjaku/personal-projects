@@ -30,7 +30,7 @@ require('server/drop-downs/parts.php');
                                     $(document).ready(function () {
                                         var currentPage = 1;
                                         var addedAssets = []; // Track added asset IDs
-                                        var singleAddParts = ['CPU', 'MOTHERBOARD', 'GPU', 'POWER SUPPLY']; // Parts that can only be added once
+                                        var singleAddParts = ['PROCESSOR', 'MOTHERBOARD', 'GPU', 'POWER SUPPLY']; // Parts that can only be added once
 
                                         // Function to fetch data based on search term
                                         function fetchData(page) {

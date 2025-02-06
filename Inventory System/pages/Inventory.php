@@ -34,19 +34,6 @@
             </ul>
         </nav>
     </div>
-
-    <!-- <script>
-        function generateQRCode(cname_id) {
-            new QRCode(document.getElementById("qrcode"), {
-                text: cname_id,
-                width: 128,
-                height: 128
-            });
-        }
-
-        // Example: Replace 'PC123456' with actual cname_id
-        generateQRCode("<?= $cname_id ?>");
-    </script> -->
     <script>
 
         $(document).ready(function () {

@@ -22,7 +22,7 @@ $assetTypeData = mysqli_fetch_assoc($assetTypeResult);
 $assetType = $assetTypeData['assets'] ?? null;
 
 // If the asset is not a motherboard, cpu, or gpu, include all computers
-$excludeComputers = in_array($assetType, ['MOTHERBOARD', 'CPU', 'GPU']);
+$excludeComputers = in_array($assetType, ['MOTHERBOARD', 'PROCESSOR', 'GPU', 'POWER SUPPLY']);
 
 // Query to fetch available computers
 $cnameIdQuery = "SELECT computer.cname, computer.cname_id, computer.assets_id FROM computer ORDER BY computer.cname";
