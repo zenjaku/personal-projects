@@ -296,7 +296,7 @@ if (isset($_GET['employee_id'])) {
                                 </h3>
                             </td>
                             <td class="text-center">
-                                <?php
+                                <!-- <?php
                                 // Fetch the image URL from the database
                                 $fetchImage = $conn->query("SELECT signature FROM employee WHERE employee_id = '$employee_id'");
                                 if ($result = $fetchImage->fetch_assoc()) {
@@ -306,7 +306,6 @@ if (isset($_GET['employee_id'])) {
                                 }
                                 ?>
 
-                                <!-- Show file input and upload button ONLY if no image exists -->
                                 <?php if (empty($imageUrl)): ?>
                                     <input type="file" class="form-control" name="e-signature" id="e-signature"
                                         aria-describedby="e-signature" aria-label="Upload" accept=".jpg, .jpeg, .png"
@@ -315,12 +314,11 @@ if (isset($_GET['employee_id'])) {
                                         name="signature">Upload</button>
                                 <?php endif; ?>
 
-                                <!-- Display the uploaded image if it exists -->
                                 <?php if (!empty($imageUrl)): ?>
                                     <div class="d-flex flex-column justify-content-center align-items-center">
                                         <img src="<?= $imageUrl ?>" alt="Employee Signature" class="img-fluid w-25 mt-5">
                                     </div>
-                                <?php endif; ?>
+                                <?php endif; ?> -->
                                 <h3 class="fst-italic fs-5 mt-3 fw-bold">
                                     <u>JOHN DARVIE CARREON</u>
                                 </h3>
