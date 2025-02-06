@@ -1,6 +1,5 @@
 <?php
 
-include_once("server/connection.php");
 session_start();
 function isActivePage($page)
 {
