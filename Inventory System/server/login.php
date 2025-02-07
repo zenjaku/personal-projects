@@ -41,7 +41,8 @@ if (isset($_POST['login'])) {
 
         // Set session variables for logged-in user
         $_SESSION['login'] = true;
-        $_SESSION['username'] = $users['username']; // Use fetched username
+        $_SESSION['username'] = $users['username'];
+        $_SESSION['type'] = $users['type']; // Use fetched username
         $_SESSION['status'] = 'success';
         $_SESSION['success'] = "Welcome, " . htmlspecialchars($users['username']);
 

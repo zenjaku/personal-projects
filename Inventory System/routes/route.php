@@ -1,31 +1,28 @@
 <?php
 // Route definitions
 $routes = [
-    '~^/$~' => 'pages/home.php',
     '~^/login$~' => 'admin/login.php',
     '~^/admin-register$~' => 'admin/admin-register.php',
     '~^/inventory-custody$~' => 'pages/inventory-custody.php',
-    '~^/esignature$~' => 'form/signature-form.php',
 
-    // Protected pages (require login)
+
+    '~^/$~' => 'pages/home.php',
+    '~^/esignature$~' => 'form/signature-form.php',
     '~^/inventory$~' => 'pages/inventory.php',
     '~^/add$~' => 'pages/add_assets.php',
     '~^/specs$~' => 'pages/specs.php',
     '~^/history$~' => 'pages/history.php',
     '~^/allocate$~' => 'pages/allocate.php',
     '~^/employee$~' => 'pages/employee.php',
-    // '~^/view$~' => 'pages/view.php',
     '~^/logout$~' => 'server/logout.php',
     '~^/register$~' => 'pages/register.php',
     '~^/parts$~' => 'pages/parts.php',
     '~^/build$~' => 'pages/build-computer.php',
     '~^/remove-parts$~' => 'server/remove-parts.php',
     '~^/add-to$~' => 'pages/add-to.php',
-    '~^/users$~' => 'admin/users.php',
+    '~^/users$~' => 'admin/users.php', // Protected /users route
     '~^/approve$~' => 'server/approve.php',
     '~^/delete$~' => 'server/delete.php',
-
-    // Form submissions (should be protected)
     '~^/add-assets$~' => 'form/inventory-form.php',
     '~^/register-employee$~' => 'form/register-form.php',
     '~^/allocation-assets$~' => 'form/allocation-form.php',
@@ -34,9 +31,6 @@ $routes = [
     '~^/transfer-assets$~' => 'form/transfer-form.php',
     '~^/return-assets$~' => 'form/return-form.php',
     '~^/register-admin$~' => 'form/admin-register-form.php',
-    // '~^/admin-signature$~' => 'form/admin-signature.php',
-
-    
 ];
 
 $request = strtok($_SERVER['REQUEST_URI'], '?'); // Remove query string
@@ -45,24 +39,29 @@ $matched = false;
 $protected_routes = [
     '/',
     '/inventory',
+    '/esignature',
     '/add',
     '/specs',
     '/history',
     '/allocate',
     '/employee',
-    '/view',
-    '/add-assets',
-    '/register-employee',
-    '/allocation-assets',
     '/logout',
     '/register',
     '/parts',
     '/build',
+    '/remove-parts',
     '/add-to',
+    '/approve',
+    '/delete',
+    '/add-assets',
+    '/register-employee',
+    '/allocation-assets',
     '/build-pc',
+    '/add-asset',
     '/transfer-assets',
     '/return-assets',
-    '/remove-parts'
+    '/register-admin',
+    // '/view',
 ];
 
 foreach ($routes as $pattern => $file) {
@@ -83,6 +82,14 @@ foreach ($routes as $pattern => $file) {
             exit();
         }
 
+        // **Restrict access to /users page based on session type**
+        if ($request === '/users' && (!isset($_SESSION['type']) || $_SESSION['type'] !== 1)) {
+            $_SESSION['status'] = 'failed';
+            $_SESSION['failed'] = 'You do not have permission to access this page.';
+            echo "<script> window.location = '/'; </script>";
+            exit();
+        }
+
         require $file;
         break;
     }
@@ -93,5 +100,4 @@ if (!$matched) {
     http_response_code(404);
     echo '404 Page not found';
 }
-
 ?>

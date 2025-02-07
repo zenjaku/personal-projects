@@ -97,11 +97,13 @@ session_start();
                             <span>Auth</span>
                         </a>
                         <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="/users" class="sidebar-link px-5" title="Users">
-                                    <span>Users</span>
-                                </a>
-                            </li>
+                            <?php if ((int) $_SESSION['type'] == 1): ?>
+                                <li class="sidebar-item">
+                                    <a href="/users" class="sidebar-link px-5" title="Users">
+                                        <span>Users</span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
                             <li class="sidebar-item">
                                 <a href="/employee" class="sidebar-link px-5" title="Employee Data">
                                     <span>Employee Data</span>
