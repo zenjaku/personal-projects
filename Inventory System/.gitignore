@@ -1,0 +1,5 @@
+.vscode
+.env
+node_modules
+test.php
+vendor
