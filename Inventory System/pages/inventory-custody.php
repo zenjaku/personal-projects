@@ -5,8 +5,13 @@ $rows = [];
 $assetsDetails = [];
 
 if (isset($_GET['employee_id'])) {
-    $employee_id = $_GET['employee_id'];
+    $employee_id = trim($_GET['employee_id']); // Trim to remove spaces
 
+    // Validate input
+    if (empty($employee_id)) {
+        echo json_encode(['error' => 'Employee ID is required']);
+        exit();
+    }
     // Fetch computer history and cname using cname_id
     $stmt = $conn->prepare("SELECT a.*, c.cname, c.assets_id 
                             FROM allocation a
@@ -31,7 +36,8 @@ if (isset($_GET['employee_id'])) {
     $fetchEmployeeStmt = $conn->prepare("SELECT * FROM employee WHERE employee_id = ?");
     $fetchEmployeeStmt->bind_param("s", $employee_id);
     $fetchEmployeeStmt->execute();
-    $show = $fetchEmployeeStmt->get_result()->fetch_assoc();
+    $show = $fetchEmployeeStmt->get_result()->fetch_assoc() ?? null;
+
 
     if (!$show) {
         $notFound = 'Employee Not Found';
@@ -218,14 +224,14 @@ if (isset($_GET['employee_id'])) {
                                 </div>
                             </td>
                             <td class="d-flex align-items-center gap-5 justify-content-end" id="custody-radio">
-                                <?php if ($show['status'] == 1): ?>
+                                <?php if (isset($show['status']) && $show['status'] == 1): ?>
                                     <input type="radio" name="e_status" id="e-new-hire" checked disabled>
                                     <label for="e-new-hire">New Hire</label>
                                     <input type="radio" name="e_status" id="e-wfh" disabled>
                                     <label for="e-wfh">WFH</label>
                                     <input type="radio" name="e_status" id="e-temp" disabled>
                                     <label for="e-temp">TEMP WFH</label>
-                                <?php elseif ($show['status'] == 2): ?>
+                                <?php elseif (isset($show['status']) && $show['status'] == 2): ?>
                                     <input type="radio" name="e_status" id="e-new-hire" disabled>
                                     <label for="e-new-hire">New Hire</label>
                                     <input type="radio" name="e_status" id="e-wfh" checked disabled>
@@ -294,7 +300,7 @@ if (isset($_GET['employee_id'])) {
                                     </div>
                                 </form>
                                 <h3 class="fst-italic fs-5 mt-3 fw-bold">
-                                    <u><?= isset($show) ? htmlspecialchars($show['fname'] . ' ' . $show['lname']) : '' ?></u>
+                                    <u><?= isset($show) ? htmlspecialchars($show['fname'] . ' ' . $show['lname']) : 'N/A' ?></u>
                                 </h3>
                             </td>
                             <td class="text-center">

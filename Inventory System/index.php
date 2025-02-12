@@ -141,6 +141,19 @@ session_start();
             <div class="sidebar-footer d-flex flex-column gap-2 mb-5">
                 <?php if (!isset($_SESSION['login']) || $_SESSION['login'] !== true): ?>
                     <li class="sidebar-item">
+                        <a href="/employee-id" class="sidebar-link d-flex align-items-center gap-3" title="Employee Access">
+                            <i class="fa-solid fa-chart-simple"></i>
+                            <span>Employee Access</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="https://drive.google.com/file/d/1kU6K38qSz7ID4ZebblqJCpw5VBqOUk99/view?usp=drive_link"
+                            class="sidebar-link d-flex align-items-center gap-3" target="_blank" title="Register">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>Documentation</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a href="/admin-register" class="sidebar-link d-flex align-items-center gap-3" title="Register">
                             <i class="fa-solid fa-user"></i>
                             <span>Register</span>
@@ -185,37 +198,7 @@ session_start();
 
                 <?php
                 include 'routes/route.php';
-                // $page = $_GET['page'] ?? 'home';
-                // switch ($page) {
-                //     case 'login':
-                //         include 'admin/Login.php';
-                //         break;
-                //     case 'register':
-                //         include 'pages/Register.php';
-                //         break;
-                //     case 'inventory':
-                //         include 'pages/Inventory.php';
-                //         break;
-                //     case 'allocate':
-                //         include 'pages/Allocate.php';
-                //         break;
-                //     case 'employee':
-                //         include 'pages/Employee.php';
-                //         break;
-                //     case 'add':
-                //         include 'pages/Add_assets.php';
-                //         break;
-                //     case 'db':
-                //         include 'admin/database.php';
-                //         break;
-                //     case 'logout':
-                //         include 'server/logout.php';
-                //         break;
-                //     default:
-                //     case 'home':
-                //         include 'pages/Inventory.php';
-                //         break;
-                // }
+
                 ?>
             </div>
         </div>

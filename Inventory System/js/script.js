@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     editBtn();
     getActivePage();
     checkPassword();
+    parseURL();
 })
 
 window.addEventListener('resize', checkScreenWidth);
@@ -17,6 +18,23 @@ function checkScreenWidth() {
         // Redirect to access.html
         window.location.href = "access.html"; // Absolute URL or relative path if appropriate
     }
+}
+
+function parseURL() {
+    const input = document.getElementById("id");
+    const submit = document.getElementById("submitBtn");
+
+    if(!input || !submit) return;
+
+    input.addEventListener("input", () => {
+        submit.disabled = input.value.trim() === "";
+    })
+
+    submit.addEventListener("click", () => {
+        const url = '/inventory-custody?employee_id=' + encodeURIComponent(input.value);
+        window.location = url;
+        console.log("URL: ", url);
+    })
 }
 
 function checkPassword() {
@@ -63,10 +81,10 @@ function checkPassword() {
         if (!isStrongPassword(password.value)) {
             confirmPassword.readOnly = true;
             registerBtn.disabled = true;
-            showToast("❌ Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.", "error");
+            showToast("Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.", "error");
         } else {
             confirmPassword.readOnly = false;
-            showToast("✅ Password meets the criteria!", "success");
+            showToast("Password meets the criteria!", "success");
         }
     });
 
@@ -74,10 +92,10 @@ function checkPassword() {
     confirmPassword.addEventListener("input", function () {
         if (password.value !== confirmPassword.value) {
             registerBtn.disabled = true;
-            showToast("⚠️ Passwords do not match!", "warning");
+            showToast("Passwords do not match!", "warning");
         } else {
             registerBtn.disabled = false;
-            showToast("✅ Passwords match!", "success");
+            showToast("Passwords match!", "success");
         }
     });
 }
