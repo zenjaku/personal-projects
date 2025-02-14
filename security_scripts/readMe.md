@@ -34,3 +34,13 @@ Set directory permissions to prevent standard users from reading or modifying th
 powershell: icacls "C:\secure_scripts" /inheritance:r /grant administrators:F
 powershell: icacls "C:\secure_scripts\.env" /inheritance:r /grant administrators:F
 
+
+<!-- block_sites -->
+Run Manually or via Task Scheduler
+To unblock manually, open PowerShell as Administrator and run:
+
+powershell.exe -ExecutionPolicy Bypass -File "C:\security_scripts\unblock_sites.ps1"
+If you want to schedule it (e.g., after work hours), follow the same Task Scheduler steps but use:
+
+C:\security_scripts\unblock_sites.ps1
+instead of block_sites.ps1
