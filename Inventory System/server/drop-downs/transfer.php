@@ -5,7 +5,7 @@ $id = mysqli_real_escape_string($conn, $id);
 
 // transfer from
 $transferEmployeeIDQuery = "
-    SELECT e.employee_id
+    SELECT e.employee_id, e.fname, e.lname
     FROM employee e
     LEFT JOIN allocation a ON e.employee_id = a.employee_id
     WHERE a.created_at = (
@@ -24,25 +24,23 @@ $transferEmployeeIDResult = mysqli_query($conn, $transferEmployeeIDQuery);
 $transferEmployeeID = mysqli_fetch_all($transferEmployeeIDResult, MYSQLI_ASSOC);
 
 // transfer to
-$transferIDQuery = "SELECT e.employee_id
-    FROM employee e
-    WHERE 
-        (
-            (SELECT a.status 
-             FROM allocation a
-             WHERE a.employee_id = e.employee_id
-             ORDER BY a.created_at DESC
-             LIMIT 1) = 0
-        )
-        OR NOT EXISTS (
-            SELECT 1 
-            FROM allocation a
-            WHERE a.employee_id = e.employee_id
-        )
-    ORDER BY e.employee_id
-    ";
-
-
+$transferIDQuery = "SELECT e.employee_id, e.fname, e.lname
+                    FROM employee e
+                    WHERE 
+                        (
+                            (SELECT a.status 
+                            FROM allocation a
+                            WHERE a.employee_id = e.employee_id
+                            ORDER BY a.created_at DESC
+                            LIMIT 1) = 0
+                        )
+                        OR NOT EXISTS (
+                            SELECT 1 
+                            FROM allocation a
+                            WHERE a.employee_id = e.employee_id
+                        )
+                    ORDER BY e.employee_id
+                    ";
 
 // Execute the query
 $transferIDResult = mysqli_query($conn, $transferIDQuery);

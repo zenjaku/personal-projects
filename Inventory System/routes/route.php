@@ -39,9 +39,9 @@ $request = strtok($_SERVER['REQUEST_URI'], '?'); // Remove query string
 $matched = false;
 
 $protected_routes = [
+    '/',
     '/users', // Now protected
     '/inventory',
-    '/esignature',
     '/add',
     '/specs',
     '/history',

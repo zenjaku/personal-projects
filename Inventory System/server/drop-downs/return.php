@@ -5,7 +5,7 @@ $id = mysqli_real_escape_string($conn, $id);
 
 // transfer from
 $getAllocations = "
-    SELECT e.employee_id
+    SELECT e.employee_id, e.fname, e.lname
     FROM employee e
     LEFT JOIN allocation a ON e.employee_id = a.employee_id
     WHERE a.status = 1
@@ -16,7 +16,7 @@ $getAllocations = "
 $transferEmployeeIDResult = mysqli_query($conn, $getAllocations);
 
 // Fetch employee IDs for transfer
-$transferEmployeeID = mysqli_fetch_all($transferEmployeeIDResult, MYSQLI_ASSOC);
+$employeeID = mysqli_fetch_all($transferEmployeeIDResult, MYSQLI_ASSOC);
 
 // $fetchTransferData = $conn->query("SELECT t_employee_id FROM transferred WHERE status = 1");
 // $transferIDs = array_column($fetchTransferData->fetch_all(MYSQLI_ASSOC), 't_employee_id');

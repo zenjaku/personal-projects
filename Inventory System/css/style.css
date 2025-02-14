@@ -424,6 +424,25 @@ table {
     height: 50px !important;
 }
 
+#search_employee_id.form-control {
+    height: 50px !important;
+}
+
+#transfer input.form-control,
+#search_return input.form-control {
+    height: 38px !important;
+}
+
+#transfer input::placeholder {
+    font-size: .8em;
+}
+
+#from label.input-group-text,
+#to label.input-group-text,
+#return label.input-group-text {
+    height: 60px !important;
+}
+
 
 /* 
 @media screen and (max-width: 769px) {

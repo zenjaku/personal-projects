@@ -5,7 +5,7 @@ $id = mysqli_real_escape_string($conn, $id);
 
 // Execute the Allocate PC query
 $employeeIDQuery = "
-    SELECT e.employee_id
+    SELECT e.employee_id, e.fname, e.lname
     FROM employee e
     WHERE 
         (
